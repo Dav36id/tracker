@@ -1,0 +1,714 @@
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f5f7;
+    color: #222;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+header {
+    background: #1f2937;
+    color: white;
+    padding: 24px 20px;
+    text-align: center;
+}
+
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+}
+
+
+header p {
+    margin: 0;
+    color: #d1d5db;
+    font-size: 15px;
+}
+
+
+/* ============================================================
+   MAIN
+   ============================================================ */
+
+main {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px 16px 50px;
+}
+
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+
+.controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+
+.control {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+
+.control label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+
+.control select,
+.control input {
+    width: 100%;
+    height: 46px;
+    padding: 0 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    font-size: 16px;
+}
+
+
+.history-control {
+    margin-bottom: 20px;
+}
+
+
+.history-button {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 8px;
+    background: #374151;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+.history-button:hover {
+    background: #1f2937;
+}
+
+
+.history-button.active {
+    background: #111827;
+}
+
+
+/* ============================================================
+   SUMMARY
+   ============================================================ */
+
+.summary {
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: white;
+    color: #666;
+    font-size: 14px;
+}
+
+
+.summary strong {
+    color: #222;
+}
+
+
+/* ============================================================
+   TRAINS
+   ============================================================ */
+
+#trains {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+.train {
+    background: white;
+    border-radius: 10px;
+    border-left: 7px solid #999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    cursor: pointer;
+    transition:
+        box-shadow 0.2s,
+        transform 0.1s;
+}
+
+
+.train:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.11);
+}
+
+
+.train:active {
+    transform: scale(0.995);
+}
+
+
+/* ============================================================
+   COLORS
+   ============================================================ */
+
+.train.pending,
+.train.finished {
+    border-left-color: #999999;
+}
+
+
+.train.running {
+    border-left-color: #2e9b57;
+}
+
+
+.train.warning {
+    border-left-color: #f39c12;
+}
+
+
+.train.late {
+    border-left-color: #d32f2f;
+}
+
+
+/* ============================================================
+   TRAIN HEADER
+   ============================================================ */
+
+.train-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 18px;
+}
+
+
+.train-left {
+    min-width: 0;
+}
+
+
+.train-id {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+
+.train-route {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 21px;
+    font-weight: bold;
+}
+
+
+.train-route .arrow {
+    color: #999;
+    font-weight: normal;
+}
+
+
+/* ============================================================
+   STATUS
+   ============================================================ */
+
+.train-right {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+
+.status {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+.status-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #999;
+    flex-shrink: 0;
+}
+
+
+.train.running .status-dot {
+    background: #2e9b57;
+    animation: pulse 1.5s infinite;
+}
+
+
+.train.warning .status-dot {
+    background: #f39c12;
+    animation: pulse 1.2s infinite;
+}
+
+
+.train.late .status-dot {
+    background: #d32f2f;
+    animation: pulse 1s infinite;
+}
+
+
+@keyframes pulse {
+
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.35;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* ============================================================
+   REFUND
+   ============================================================ */
+
+.refund {
+    margin-top: 7px;
+    color: #d32f2f;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   STOPS
+   ============================================================ */
+
+.stops {
+    display: none;
+    padding: 0 18px 18px;
+    border-top: 1px solid #eee;
+}
+
+
+.train.expanded .stops {
+    display: block;
+}
+
+
+.stops-title {
+    padding-top: 15px;
+    margin-bottom: 13px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+
+/* ============================================================
+   STOPS HEADER
+   ============================================================ */
+
+.stops-header {
+    display: grid;
+
+    /*
+       EXACTAMENT LES MATEIXES 4 COLUMNES
+       QUE LES FILES DE LES PARADES
+    */
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        80px
+        95px
+        70px;
+
+    align-items: center;
+    gap: 10px;
+
+    padding-bottom: 8px;
+
+    border-bottom: 1px solid #eee;
+
+    color: #777;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+
+.stop-header-station {
+    text-align: left;
+}
+
+
+.stop-header-theoretical,
+.stop-header-real,
+.stop-header-delay {
+    text-align: right;
+}
+
+
+/* ============================================================
+   STOP ROW
+   ============================================================ */
+
+.stop-row {
+    display: grid;
+
+    /*
+       EXACTAMENT LES MATEIXES 4 COLUMNES
+       QUE LA CAPÇALERA
+    */
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        80px
+        95px
+        70px;
+
+    align-items: center;
+    gap: 10px;
+
+    min-height: 56px;
+
+    padding: 8px 0;
+
+    border-bottom: 1px solid #f0f0f0;
+}
+
+
+.stop-row:last-child {
+    border-bottom: 0;
+}
+
+
+.stop-name {
+    min-width: 0;
+    font-size: 15px;
+    color: #333;
+}
+
+
+/* ============================================================
+   THEORETICAL
+   ============================================================ */
+
+.theoretical-cell {
+    text-align: right;
+}
+
+
+.theoretical-time {
+    font-size: 16px;
+    color: #777;
+}
+
+
+/* ============================================================
+   REAL
+   ============================================================ */
+
+.real-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    min-width: 0;
+}
+
+
+.actual-time {
+    font-size: 16px;
+    font-weight: bold;
+    color: #222;
+}
+
+
+.estimated-time {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+}
+
+
+.time-label {
+    margin-top: 1px;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: bold;
+}
+
+
+.real-label {
+    color: #2e9b57;
+}
+
+
+.estimated-label {
+    color: #999;
+}
+
+
+.no-real-time {
+    color: #bbb;
+    font-size: 18px;
+}
+
+
+/* ============================================================
+   DELAY
+   ============================================================ */
+
+.delay-cell {
+    text-align: right;
+}
+
+
+.stop-delay {
+    font-size: 13px;
+    font-weight: bold;
+    color: #d32f2f;
+}
+
+
+.no-stops {
+    margin: 15px 0 0;
+    color: #777;
+    font-size: 14px;
+}
+
+
+/* ============================================================
+   LOADING / EMPTY / ERROR
+   ============================================================ */
+
+.loading {
+    padding: 30px;
+    text-align: center;
+    color: #777;
+    background: white;
+    border-radius: 10px;
+}
+
+
+.empty {
+    padding: 35px 20px;
+    text-align: center;
+    color: #777;
+    background: white;
+    border-radius: 10px;
+}
+
+
+.error {
+    padding: 20px;
+    border-radius: 10px;
+    background: #fff0f0;
+    color: #c62828;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 700px) {
+
+    header {
+        padding: 20px 15px;
+    }
+
+
+    header h1 {
+        font-size: 26px;
+    }
+
+
+    main {
+        padding: 16px 10px 40px;
+    }
+
+
+    .controls {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+
+    .train-main {
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+
+    .train-id {
+        font-size: 17px;
+    }
+
+
+    .train-route {
+        font-size: 19px;
+    }
+
+
+    .train-right {
+        max-width: 45%;
+    }
+
+
+    .status {
+        font-size: 12px;
+    }
+
+
+    .refund {
+        font-size: 11px;
+    }
+
+
+    .stops {
+        padding: 0 12px 12px;
+    }
+
+
+    .stops-header,
+    .stop-row {
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            65px
+            75px
+            55px;
+
+        gap: 6px;
+    }
+
+
+    .theoretical-time,
+    .actual-time,
+    .estimated-time {
+        font-size: 14px;
+    }
+
+
+    .stop-delay {
+        font-size: 11px;
+    }
+
+
+    .time-label {
+        font-size: 8px;
+    }
+}
+
+
+/* ============================================================
+   VERY SMALL SCREENS
+   ============================================================ */
+
+@media (max-width: 450px) {
+
+    .train-main {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+
+    .train-right {
+        width: 100%;
+        max-width: none;
+        text-align: left;
+    }
+
+
+    .status {
+        justify-content: flex-start;
+    }
+
+
+    .refund {
+        text-align: left;
+    }
+
+
+    /*
+       En pantalles molt petites mantenim les 4 columnes,
+       però les fem més compactes.
+    */
+
+    .stops {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+
+    .stops-header,
+    .stop-row {
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            52px
+            62px
+            48px;
+
+        gap: 4px;
+    }
+
+
+    .stops-header {
+        font-size: 11px;
+    }
+
+
+    .stop-name {
+        font-size: 13px;
+    }
+
+
+    .theoretical-time,
+    .actual-time,
+    .estimated-time {
+        font-size: 13px;
+    }
+
+
+    .stop-delay {
+        font-size: 10px;
+    }
+
+
+    .time-label {
+        font-size: 7px;
+    }
+}
