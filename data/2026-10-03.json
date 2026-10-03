@@ -1,7 +1,7 @@
 {
   "source": "Renfe Data",
   "source_type": "Renfe GTFS-RT",
-  "generated_at": "2026-10-03T12:43:11.321747+00:00",
+  "generated_at": "2026-10-03T14:03:42.029363+00:00",
   "date": "2026-10-03",
   "line": "R15",
   "trains": [
@@ -1097,8 +1097,8 @@
           "scheduled_arrival": 864,
           "scheduled_departure": 864,
           "actual_minutes": 885,
-          "delay_minutes": 25,
-          "actual_time": "2026-10-03T14:45:50+02:00"
+          "actual_time": "2026-10-03T14:45:50+02:00",
+          "delay_minutes": 25
         }
       ]
     },
@@ -1168,8 +1168,8 @@
           "scheduled_arrival": 907,
           "scheduled_departure": 909,
           "actual_minutes": 919,
-          "delay_minutes": 13,
-          "actual_time": "2026-10-03T15:19:41+02:00"
+          "actual_time": "2026-10-03T15:19:41+02:00",
+          "delay_minutes": 13
         },
         {
           "station": "Barcelona-Passeig de Gràcia",
@@ -1232,8 +1232,8 @@
           "scheduled_arrival": 888,
           "scheduled_departure": 889,
           "actual_minutes": 898,
-          "delay_minutes": 10,
-          "actual_time": "2026-10-03T14:58:29+02:00"
+          "actual_time": "2026-10-03T14:58:29+02:00",
+          "delay_minutes": 10
         },
         {
           "station": "Torredembarra",
@@ -1279,9 +1279,9 @@
       "direction": "BAR_REUS",
       "departure": "2026-10-03T14:50:00",
       "arrival": "2026-10-03T17:24:00",
-      "started": false,
+      "started": true,
       "arrived": false,
-      "final_delay_minutes": 0,
+      "final_delay_minutes": 13,
       "stops": [
         {
           "station": "Capçanes",
@@ -1351,7 +1351,9 @@
           "stop_id": "71700",
           "scheduled_arrival": 991,
           "scheduled_departure": 992,
-          "actual_minutes": null
+          "actual_minutes": 974,
+          "delay_minutes": 13,
+          "actual_time": "2026-10-03T16:14:07+02:00"
         },
         {
           "station": "Barcelona-Sants",
@@ -1385,7 +1387,7 @@
       "arrival": "2026-10-03T16:54:00",
       "started": true,
       "arrived": false,
-      "final_delay_minutes": 21,
+      "final_delay_minutes": 0,
       "stops": [
         {
           "station": "Reus",
@@ -1400,8 +1402,8 @@
           "scheduled_arrival": 915,
           "scheduled_departure": 915,
           "actual_minutes": 883,
-          "delay_minutes": 21,
-          "actual_time": "2026-10-03T14:43:07+02:00"
+          "actual_time": "2026-10-03T14:43:07+02:00",
+          "delay_minutes": 21
         },
         {
           "station": "Tarragona",
@@ -1443,7 +1445,9 @@
           "stop_id": "71801",
           "scheduled_arrival": 997,
           "scheduled_departure": 999,
-          "actual_minutes": null
+          "actual_minutes": 984,
+          "delay_minutes": 0,
+          "actual_time": "2026-10-03T16:24:00+02:00"
         },
         {
           "station": "Barcelona-Passeig de Gràcia",
@@ -1470,7 +1474,7 @@
       "arrival": "2026-10-03T17:03:00",
       "started": true,
       "arrived": false,
-      "final_delay_minutes": 0,
+      "final_delay_minutes": 5,
       "stops": [
         {
           "station": "Barcelona Estació de França",
@@ -1485,8 +1489,8 @@
           "scheduled_arrival": 925,
           "scheduled_departure": 926,
           "actual_minutes": 898,
-          "delay_minutes": 0,
-          "actual_time": "2026-10-03T14:58:00+02:00"
+          "actual_time": "2026-10-03T14:58:00+02:00",
+          "delay_minutes": 0
         },
         {
           "station": "Barcelona-Sants",
@@ -1521,7 +1525,9 @@
           "stop_id": "71502",
           "scheduled_arrival": 992,
           "scheduled_departure": 992,
-          "actual_minutes": null
+          "actual_minutes": 966,
+          "delay_minutes": 5,
+          "actual_time": "2026-10-03T16:06:59+02:00"
         },
         {
           "station": "Tarragona",
@@ -1553,9 +1559,9 @@
       "direction": "BAR_REUS",
       "departure": "2026-10-03T15:45:00",
       "arrival": "2026-10-03T19:18:00",
-      "started": false,
+      "started": true,
       "arrived": false,
-      "final_delay_minutes": 0,
+      "final_delay_minutes": -1,
       "stops": [
         {
           "station": "Barcelona Estació de França",
@@ -1583,7 +1589,9 @@
           "stop_id": "71700",
           "scheduled_arrival": 995,
           "scheduled_departure": 996,
-          "actual_minutes": null
+          "actual_minutes": 993,
+          "delay_minutes": -1,
+          "actual_time": "2026-10-03T16:33:40+02:00"
         },
         {
           "station": "Sant Vicenç de Calders",
@@ -2676,5 +2684,5 @@
       ]
     }
   ],
-  "realtime_updated_at": "2026-10-03T14:43:12.456698+02:00"
+  "realtime_updated_at": "2026-10-03T16:03:43.171533+02:00"
 }
