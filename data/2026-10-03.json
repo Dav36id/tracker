@@ -1,7 +1,7 @@
 {
   "source": "Renfe Data",
-  "source_type": "GTFS + GTFS-RT",
-  "generated_at": "2026-10-03T12:36:18.329146+00:00",
+  "source_type": "Renfe GTFS-RT",
+  "generated_at": "2026-10-03T12:43:11.321747+00:00",
   "date": "2026-10-03",
   "line": "R15",
   "trains": [
@@ -1025,8 +1025,8 @@
       "departure": "2026-10-03T12:36:00",
       "arrival": "2026-10-03T14:24:00",
       "started": true,
-      "arrived": false,
-      "final_delay_minutes": 26,
+      "arrived": true,
+      "final_delay_minutes": 25,
       "stops": [
         {
           "station": "Reus",
@@ -1089,16 +1089,16 @@
           "stop_id": "71802",
           "scheduled_arrival": 853,
           "scheduled_departure": 854,
-          "actual_minutes": 878,
-          "delay_minutes": 26,
-          "actual_time": "2026-10-03T14:38:47+02:00"
+          "actual_minutes": null
         },
         {
           "station": "Barcelona Estació de França",
           "stop_id": "79400",
           "scheduled_arrival": 864,
           "scheduled_departure": 864,
-          "actual_minutes": null
+          "actual_minutes": 885,
+          "delay_minutes": 25,
+          "actual_time": "2026-10-03T14:45:50+02:00"
         }
       ]
     },
@@ -1109,9 +1109,9 @@
       "direction": "REUS_BAR",
       "departure": "2026-10-03T13:36:00",
       "arrival": "2026-10-03T15:24:00",
-      "started": false,
+      "started": true,
       "arrived": false,
-      "final_delay_minutes": 0,
+      "final_delay_minutes": 13,
       "stops": [
         {
           "station": "Reus",
@@ -1167,7 +1167,9 @@
           "stop_id": "71801",
           "scheduled_arrival": 907,
           "scheduled_departure": 909,
-          "actual_minutes": null
+          "actual_minutes": 919,
+          "delay_minutes": 13,
+          "actual_time": "2026-10-03T15:19:41+02:00"
         },
         {
           "station": "Barcelona-Passeig de Gràcia",
@@ -1192,9 +1194,9 @@
       "direction": "BAR_REUS",
       "departure": "2026-10-03T13:45:00",
       "arrival": "2026-10-03T15:33:00",
-      "started": false,
+      "started": true,
       "arrived": false,
-      "final_delay_minutes": 0,
+      "final_delay_minutes": 10,
       "stops": [
         {
           "station": "Barcelona Estació de França",
@@ -1229,7 +1231,9 @@
           "stop_id": "71600",
           "scheduled_arrival": 888,
           "scheduled_departure": 889,
-          "actual_minutes": null
+          "actual_minutes": 898,
+          "delay_minutes": 10,
+          "actual_time": "2026-10-03T14:58:29+02:00"
         },
         {
           "station": "Torredembarra",
@@ -1379,9 +1383,9 @@
       "direction": "REUS_BAR",
       "departure": "2026-10-03T15:06:00",
       "arrival": "2026-10-03T16:54:00",
-      "started": false,
+      "started": true,
       "arrived": false,
-      "final_delay_minutes": 0,
+      "final_delay_minutes": 21,
       "stops": [
         {
           "station": "Reus",
@@ -1395,7 +1399,9 @@
           "stop_id": "71401",
           "scheduled_arrival": 915,
           "scheduled_departure": 915,
-          "actual_minutes": null
+          "actual_minutes": 883,
+          "delay_minutes": 21,
+          "actual_time": "2026-10-03T14:43:07+02:00"
         },
         {
           "station": "Tarragona",
@@ -1462,7 +1468,7 @@
       "direction": "BAR_REUS",
       "departure": "2026-10-03T15:15:00",
       "arrival": "2026-10-03T17:03:00",
-      "started": false,
+      "started": true,
       "arrived": false,
       "final_delay_minutes": 0,
       "stops": [
@@ -1478,7 +1484,9 @@
           "stop_id": "71802",
           "scheduled_arrival": 925,
           "scheduled_departure": 926,
-          "actual_minutes": null
+          "actual_minutes": 898,
+          "delay_minutes": 0,
+          "actual_time": "2026-10-03T14:58:00+02:00"
         },
         {
           "station": "Barcelona-Sants",
@@ -2668,5 +2676,5 @@
       ]
     }
   ],
-  "realtime_updated_at": "2026-10-03T14:36:19.194941+02:00"
+  "realtime_updated_at": "2026-10-03T14:43:12.456698+02:00"
 }
