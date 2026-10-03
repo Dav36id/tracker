@@ -132,28 +132,72 @@ print(
     "Trips amb informació:",
     len(realtime_trips)
 )
-print()
-print("=== TRIP IDs GTFS-RT ===")
 
-for trip_id in realtime_trips:
+
+# ============================================================
+# INFORMACIÓ COMPLETA DEL GTFS-RT
+#
+# AQUEST BLOC ÉS TEMPORAL.
+# Ens serveix per descobrir com Renfe identifica
+# els trens i les parades en temps real.
+# ============================================================
+
+print()
+print("=== INFORMACIÓ COMPLETA GTFS-RT ===")
+
+
+for trip_id, trip_update in realtime_trips.items():
+
+    print()
     print(
-        "GTFS-RT:",
+        "TRIP ID:",
         repr(trip_id)
     )
 
-print()
-print("=== TRIP IDs DEL JSON ===")
 
-for train in dades.get("trains", []):
     print(
-        "JSON:",
-        repr(
-            train.get("train_id")
+        "TRIP:"
+    )
+
+    print(
+        json.dumps(
+            trip_update.get(
+                "trip",
+                {}
+            ),
+            ensure_ascii=False,
+            indent=2
         )
     )
 
+
+    stop_updates = trip_update.get(
+        "stopTimeUpdate",
+        []
+    )
+
+
+    print()
+    print(
+        "STOP UPDATES:",
+        len(stop_updates)
+    )
+
+
+    for update in stop_updates:
+
+        print(
+            json.dumps(
+                update,
+                ensure_ascii=False,
+                indent=2
+            )
+        )
+
+
 print()
 print("==========================================")
+
 
 # ============================================================
 # FUNCIONS DE TEMPS
@@ -234,13 +278,21 @@ def minuts_a_hora(minuts):
 
 def obtenir_retard(obj):
 
-    if not isinstance(obj, dict):
+    if not isinstance(
+        obj,
+        dict
+    ):
         return None
 
-    delay = obj.get("delay")
+
+    delay = obj.get(
+        "delay"
+    )
+
 
     if delay is None:
         return None
+
 
     try:
 
@@ -257,25 +309,40 @@ def obtenir_retard(obj):
 
 def obtenir_timestamp_arribada(update):
 
-    if not isinstance(update, dict):
+    if not isinstance(
+        update,
+        dict
+    ):
         return None
+
 
     arrival = update.get(
         "arrival"
     )
 
-    if not isinstance(arrival, dict):
+
+    if not isinstance(
+        arrival,
+        dict
+    ):
         return None
+
 
     timestamp = arrival.get(
         "time"
     )
 
+
     if timestamp is not None:
+
         try:
+
             return int(timestamp)
+
         except Exception:
+
             pass
+
 
     return None
 
@@ -286,25 +353,40 @@ def obtenir_timestamp_arribada(update):
 
 def obtenir_timestamp_sortida(update):
 
-    if not isinstance(update, dict):
+    if not isinstance(
+        update,
+        dict
+    ):
         return None
+
 
     departure = update.get(
         "departure"
     )
 
-    if not isinstance(departure, dict):
+
+    if not isinstance(
+        departure,
+        dict
+    ):
         return None
+
 
     timestamp = departure.get(
         "time"
     )
 
+
     if timestamp is not None:
+
         try:
+
             return int(timestamp)
+
         except Exception:
+
             pass
+
 
     return None
 
@@ -315,22 +397,32 @@ def obtenir_timestamp_sortida(update):
 
 def obtenir_retard_parada(update):
 
-    if not isinstance(update, dict):
+    if not isinstance(
+        update,
+        dict
+    ):
         return None
 
 
-    # Primer intentem arrival
+    # --------------------------------------------------------
+    # ARRIBADA
+    # --------------------------------------------------------
 
     arrival = update.get(
         "arrival"
     )
 
-    if isinstance(arrival, dict):
+
+    if isinstance(
+        arrival,
+        dict
+    ):
 
         delay = arrival.get(
             "delay"
         )
 
+
         if delay is not None:
 
             try:
@@ -340,20 +432,28 @@ def obtenir_retard_parada(update):
                 )
 
             except Exception:
+
                 pass
 
 
-    # Si no hi ha arrival, mirem departure
+    # --------------------------------------------------------
+    # SORTIDA
+    # --------------------------------------------------------
 
     departure = update.get(
         "departure"
     )
 
-    if isinstance(departure, dict):
+
+    if isinstance(
+        departure,
+        dict
+    ):
 
         delay = departure.get(
             "delay"
         )
+
 
         if delay is not None:
 
@@ -364,6 +464,7 @@ def obtenir_retard_parada(update):
                 )
 
             except Exception:
+
                 pass
 
 
@@ -419,7 +520,9 @@ def crear_index_stop_updates(
 # ============================================================
 
 trens_actualitzats = 0
+
 parades_actualitzades = 0
+
 trens_sense_realtime = 0
 
 
@@ -460,7 +563,7 @@ for train in dades.get(
 
 
     # --------------------------------------------------------
-    # INDEXAR LES PARADES REALTIME
+    # INDEXAR PARADES REALTIME
     # --------------------------------------------------------
 
     stop_updates = crear_index_stop_updates(
@@ -506,7 +609,7 @@ for train in dades.get(
         # RETARD
         # ----------------------------------------------------
 
-        delay = obter_retard = obter_retard_parada(
+        delay = obtenir_retard_parada(
             update
         )
 
@@ -587,7 +690,7 @@ for train in dades.get(
 
 
     # --------------------------------------------------------
-    # ESTAT DEL TRAIN
+    # ESTAT DEL TREN
     # --------------------------------------------------------
 
     trip_properties = trip_update.get(
@@ -595,8 +698,6 @@ for train in dades.get(
         {}
     )
 
-
-    # Si Renfe indica que el viatge ha acabat
 
     if (
         trip_properties.get(
@@ -616,6 +717,7 @@ for train in dades.get(
 
     actuals = []
 
+
     for stop in train.get(
         "stops",
         []
@@ -624,6 +726,7 @@ for train in dades.get(
         actual = stop.get(
             "actual_minutes"
         )
+
 
         if actual is not None:
 
@@ -639,39 +742,44 @@ for train in dades.get(
         ] = True
 
 
-        # Mirem l'última parada
+        # ----------------------------------------------------
+        # MIRAR ÚLTIMA PARADA
+        # ----------------------------------------------------
 
-        ultima = train[
-            "stops"
-        ][-1]
-
-
-        ultima_actual = ultima.get(
-            "actual_minutes"
+        stops = train.get(
+            "stops",
+            []
         )
 
 
-        if ultima_actual is not None:
+        if stops:
 
-            ara = (
-                datetime.now(
-                    MADRID_TZ
-                ).hour * 60
-                +
-                datetime.now(
-                    MADRID_TZ
-                ).minute
+            ultima = stops[-1]
+
+
+            ultima_actual = ultima.get(
+                "actual_minutes"
             )
 
 
-            # Si l'hora real de l'última parada
-            # ja ha passat, considerem arribat.
+            if ultima_actual is not None:
 
-            if ultima_actual <= ara:
+                ara_dt = datetime.now(
+                    MADRID_TZ
+                )
 
-                train[
-                    "arrived"
-                ] = True
+
+                ara = (
+                    ara_dt.hour * 60
+                    + ara_dt.minute
+                )
+
+
+                if ultima_actual <= ara:
+
+                    train[
+                        "arrived"
+                    ] = True
 
 
 # ============================================================
@@ -709,6 +817,7 @@ with open(
 # ============================================================
 
 print()
+
 print(
     "=========================================="
 )
