@@ -33,6 +33,10 @@ jobs:
         run: |
           python collector/realtime.py
 
+      - name: Provar API Mobilitat Penedès
+        run: |
+          python collector/test_realtime.py
+
       - name: Guardar dades al repositori
         run: |
           git config user.name "github-actions[bot]"
