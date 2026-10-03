@@ -198,4 +198,4 @@ def minuts_a_hora(minuts):
     return (
         f"{hores:02d}:"
         f"{minuts_restants:02d}"
-   
+    )
