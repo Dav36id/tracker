@@ -2,6 +2,7 @@ import csv
 import io
 import json
 import os
+import time
 import zipfile
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -13,31 +14,40 @@ import requests
 # CONFIGURACIÓ
 # ============================================================
 
-GTFS_URL = "https://data.transport.gencat.cat/estatic/renfe/GTFS/fomento_transit.zip"
+GTFS_URL = (
+    "https://data.transport.gencat.cat/"
+    "estatic/renfe/GTFS/fomento_transit.zip"
+)
 
 DATA_DIR = "data"
 
 TZ = ZoneInfo("Europe/Madrid")
 
-# Diferència màxima que permetem entre:
-# actual - teòric
-# i
-# delay
+# Marge màxim que acceptem entre:
+#
+#   actual - teòric
+#
+# i:
+#
+#   delay
 #
 # Exemple correcte:
-# teòric 16:32
-# delay +5
-# real 16:37
 #
-# 16:37 - 16:32 = 5
+#   Teòric = 16:32
+#   Real   = 16:37
+#   Delay  = +5
+#
+#   16:37 - 16:32 = +5
 #
 # Exemple incorrecte:
-# teòric 16:32
-# delay +5
-# real 16:06
 #
-# 16:06 - 16:32 = -26
-# -> NO coherent
+#   Teòric = 16:32
+#   Real   = 16:06
+#   Delay  = +5
+#
+#   16:06 - 16:32 = -26
+#
+# Per tant, es descarta.
 MAX_REALTIME_ERROR_MINUTES = 5
 
 
@@ -50,10 +60,13 @@ def minuts_des_de_mitjanit(value):
     Converteix HH:MM o HH:MM:SS a minuts des de mitjanit.
     """
 
-    if not value:
+    if value is None:
         return None
 
     value = str(value).strip()
+
+    if not value:
+        return None
 
     try:
         parts = value.split(":")
@@ -68,6 +81,10 @@ def minuts_des_de_mitjanit(value):
 
 
 def normalitzar_text(value):
+    """
+    Elimina espais sobrants.
+    """
+
     if value is None:
         return ""
 
@@ -76,20 +93,26 @@ def normalitzar_text(value):
 
 def carregar_csv(z, nom):
     """
-    Llegeix un CSV del GTFS i elimina espais dels headers i valors.
+    Llegeix un CSV del GTFS i normalitza headers i valors.
     """
 
     with z.open(nom) as f:
-        text = io.TextIOWrapper(f, encoding="utf-8-sig")
+
+        text = io.TextIOWrapper(
+            f,
+            encoding="utf-8-sig"
+        )
 
         reader = csv.DictReader(text)
 
         files = []
 
         for row in reader:
+
             clean = {}
 
             for key, value in row.items():
+
                 key = normalitzar_text(key)
                 value = normalitzar_text(value)
 
@@ -109,81 +132,175 @@ def carregar_json_anterior(data_path):
         return None
 
     try:
-        with open(data_path, "r", encoding="utf-8") as f:
+
+        with open(
+            data_path,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
             return json.load(f)
 
     except Exception as e:
-        print(f"⚠️ No s'ha pogut llegir el JSON anterior: {e}")
+
+        print(
+            f"⚠️ No s'ha pogut llegir el JSON anterior: {e}"
+        )
+
         return None
 
 
 # ============================================================
-# VALIDACIÓ DE REALTIME ANTIC
+# DESCÀRREGA GTFS
+# ============================================================
+
+def descarregar_gtfs():
+    """
+    Descarrega el GTFS de Renfe amb diversos reintents.
+
+    Si el servidor/DNS falla temporalment, ho torna a intentar.
+    """
+
+    print("📥 Descarregant GTFS Renfe...")
+
+    max_intents = 5
+
+    for intent in range(1, max_intents + 1):
+
+        try:
+
+            print(
+                f"   Intent {intent}/{max_intents}..."
+            )
+
+            response = requests.get(
+                GTFS_URL,
+                timeout=60
+            )
+
+            response.raise_for_status()
+
+            print(
+                f"✅ GTFS descarregat: "
+                f"{len(response.content)} bytes"
+            )
+
+            return zipfile.ZipFile(
+                io.BytesIO(response.content)
+            )
+
+        except requests.exceptions.RequestException as e:
+
+            print(
+                f"⚠️ Error descarregant GTFS: {e}"
+            )
+
+            if intent < max_intents:
+
+                espera = intent * 10
+
+                print(
+                    f"   ⏳ Esperant {espera} segons..."
+                )
+
+                time.sleep(espera)
+
+            else:
+
+                print()
+                print(
+                    "❌ No s'ha pogut descarregar el GTFS "
+                    "després de tots els intents."
+                )
+
+                raise
+
+
+# ============================================================
+# VALIDACIÓ REALTIME ANTIC
 # ============================================================
 
 def realtime_es_coherent(stop_nou, stop_antic):
     """
-    Comprova si les dades de temps real antigues tenen sentit.
+    Comprova si les dades realtime antigues són coherents.
 
     Exigim:
 
         actual - teòric ≈ delay
 
-    amb un marge de MAX_REALTIME_ERROR_MINUTES.
-
-    Això evita conservar errors com:
-
-        Teòric: 16:32
-        Real:    16:06
-        Delay:   +5
-
-    perquè:
-
-        16:06 - 16:32 = -26
-
-    i no +5.
+    amb un marge de ±5 minuts.
     """
 
     if not isinstance(stop_antic, dict):
         return False
 
-    actual = stop_antic.get("actual_minutes")
-    delay = stop_antic.get("delay_minutes")
+    actual = stop_antic.get(
+        "actual_minutes"
+    )
+
+    delay = stop_antic.get(
+        "delay_minutes"
+    )
 
     if actual is None or delay is None:
         return False
 
     try:
+
         actual = float(actual)
         delay = float(delay)
+
     except Exception:
+
         return False
 
-    # Horari teòric nou
-    theoretical = stop_nou.get("scheduled_arrival")
+    theoretical = stop_nou.get(
+        "scheduled_arrival"
+    )
 
     if theoretical is None:
-        theoretical = stop_nou.get("scheduled_departure")
+
+        theoretical = stop_nou.get(
+            "scheduled_departure"
+        )
 
     if theoretical is None:
         return False
 
     try:
+
         theoretical = float(theoretical)
+
     except Exception:
+
         return False
 
     diferencia = actual - theoretical
 
-    error = abs(diferencia - delay)
+    error = abs(
+        diferencia - delay
+    )
 
     if error > MAX_REALTIME_ERROR_MINUTES:
+
         print(
             "🧹 Realtime antic descartat:"
-            f" teòric={theoretical},"
-            f" real={actual},"
-            f" delay={delay},"
-            f" error={error:.1f}"
+        )
+
+        print(
+            f"   Teòric: {theoretical}"
+        )
+
+        print(
+            f"   Real:   {actual}"
+        )
+
+        print(
+            f"   Delay:  {delay}"
+        )
+
+        print(
+            f"   Error:  {error:.1f} min"
         )
 
         return False
@@ -192,10 +309,13 @@ def realtime_es_coherent(stop_nou, stop_antic):
 
 
 # ============================================================
-# CONSERVAR REALTIME VÀLID
+# CONSERVAR REALTIME ANTIC
 # ============================================================
 
-def conservar_realtime_anterior(circulacions, dades_anteriors):
+def conservar_realtime_anterior(
+    circulacions,
+    dades_anteriors
+):
     """
     Conserva les dades realtime del JSON anterior,
     però NOMÉS si són coherents.
@@ -205,8 +325,6 @@ def conservar_realtime_anterior(circulacions, dades_anteriors):
         started
         arrived
         final_delay_minutes
-
-    a partir de les dades realtime vàlides.
     """
 
     if not dades_anteriors:
@@ -214,58 +332,110 @@ def conservar_realtime_anterior(circulacions, dades_anteriors):
 
     trens_antics = {}
 
-    for tren in dades_anteriors.get("trains", []):
-        train_id = tren.get("train_id")
+    for tren in dades_anteriors.get(
+        "trains",
+        []
+    ):
+
+        train_id = tren.get(
+            "train_id"
+        )
 
         if train_id:
-            trens_antics[str(train_id)] = tren
+
+            trens_antics[
+                str(train_id)
+            ] = tren
 
     conservats = 0
     descartats = 0
 
     for tren in circulacions:
 
-        train_id = str(tren.get("train_id", ""))
+        train_id = str(
+            tren.get(
+                "train_id",
+                ""
+            )
+        )
 
-        antic = trens_antics.get(train_id)
+        antic = trens_antics.get(
+            train_id
+        )
 
         if not antic:
             continue
 
         stops_antics = {}
 
-        for stop in antic.get("stops", []):
-            stop_id = normalitzar_text(stop.get("stop_id"))
+        for stop in antic.get(
+            "stops",
+            []
+        ):
+
+            stop_id = normalitzar_text(
+                stop.get("stop_id")
+            )
 
             if stop_id:
-                stops_antics[stop_id] = stop
+
+                stops_antics[
+                    stop_id
+                ] = stop
 
         valid_realtime_stops = []
 
         # ----------------------------------------------------
-        # STOPS
+        # PARADES
         # ----------------------------------------------------
 
-        for stop in tren.get("stops", []):
+        for stop in tren.get(
+            "stops",
+            []
+        ):
 
-            stop_id = normalitzar_text(stop.get("stop_id"))
+            stop_id = normalitzar_text(
+                stop.get("stop_id")
+            )
 
             if not stop_id:
                 continue
 
-            antic_stop = stops_antics.get(stop_id)
+            antic_stop = stops_antics.get(
+                stop_id
+            )
 
             if not antic_stop:
                 continue
 
-            if not realtime_es_coherent(stop, antic_stop):
+            # ------------------------------------------------
+            # VALIDAR REALTIME ANTIC
+            # ------------------------------------------------
+
+            if not realtime_es_coherent(
+                stop,
+                antic_stop
+            ):
 
                 descartats += 1
 
-                # Ens assegurem que no quedi cap resta antiga
+                # Eliminem qualsevol resta antiga.
+
                 stop["actual_minutes"] = None
                 stop["actual_time"] = None
                 stop["delay_minutes"] = None
+
+                if "realtime_delay_minutes" in stop:
+
+                    stop[
+                        "realtime_delay_minutes"
+                    ] = None
+
+                if "delay_seconds" in stop:
+
+                    stop[
+                        "delay_seconds"
+                    ] = None
 
                 continue
 
@@ -273,107 +443,146 @@ def conservar_realtime_anterior(circulacions, dades_anteriors):
             # REALTIME VÀLID
             # ------------------------------------------------
 
-            stop["actual_minutes"] = antic_stop.get("actual_minutes")
-            stop["actual_time"] = antic_stop.get("actual_time")
-            stop["delay_minutes"] = antic_stop.get("delay_minutes")
+            stop["actual_minutes"] = (
+                antic_stop.get(
+                    "actual_minutes"
+                )
+            )
 
-            # També conservem altres camps eventuals
-            if antic_stop.get("realtime_delay_minutes") is not None:
-                stop["realtime_delay_minutes"] = antic_stop.get(
+            stop["actual_time"] = (
+                antic_stop.get(
+                    "actual_time"
+                )
+            )
+
+            stop["delay_minutes"] = (
+                antic_stop.get(
+                    "delay_minutes"
+                )
+            )
+
+            if antic_stop.get(
+                "realtime_delay_minutes"
+            ) is not None:
+
+                stop[
+                    "realtime_delay_minutes"
+                ] = antic_stop.get(
                     "realtime_delay_minutes"
                 )
 
-            if antic_stop.get("delay_seconds") is not None:
-                stop["delay_seconds"] = antic_stop.get(
+            if antic_stop.get(
+                "delay_seconds"
+            ) is not None:
+
+                stop[
+                    "delay_seconds"
+                ] = antic_stop.get(
                     "delay_seconds"
                 )
 
-            valid_realtime_stops.append(stop)
+            valid_realtime_stops.append(
+                stop
+            )
 
             conservats += 1
 
         # ----------------------------------------------------
-        # ESTAT DEL TREN
+        # ESTAT NET DEL TREN
         # ----------------------------------------------------
 
-        # Sempre partim d'un estat net.
         tren["started"] = False
         tren["arrived"] = False
         tren["final_delay_minutes"] = 0
 
+        # Si no queda cap parada realtime vàlida,
+        # no conservem cap estat antic.
+
         if not valid_realtime_stops:
             continue
 
-        # Ja ha començat si tenim almenys una parada realtime.
+        # ----------------------------------------------------
+        # STARTED
+        # ----------------------------------------------------
+
         tren["started"] = True
 
-        # Ordenem segons l'ordre original del recorregut.
-        # L'última parada amb realtime és la més avançada.
-        ultima = valid_realtime_stops[-1]
+        # ----------------------------------------------------
+        # FINAL DELAY
+        # ----------------------------------------------------
 
-        delay_final = ultima.get("delay_minutes")
+        ultima_realtime = (
+            valid_realtime_stops[-1]
+        )
+
+        delay_final = (
+            ultima_realtime.get(
+                "delay_minutes"
+            )
+        )
 
         if delay_final is not None:
+
             try:
-                tren["final_delay_minutes"] = int(round(float(delay_final)))
+
+                tren[
+                    "final_delay_minutes"
+                ] = int(
+                    round(
+                        float(delay_final)
+                    )
+                )
+
             except Exception:
-                tren["final_delay_minutes"] = 0
+
+                tren[
+                    "final_delay_minutes"
+                ] = 0
 
         # ----------------------------------------------------
-        # ARRIBAT
+        # ARRIVED
         # ----------------------------------------------------
 
-        stops = tren.get("stops", [])
+        stops = tren.get(
+            "stops",
+            []
+        )
 
-        if stops:
+        if not stops:
+            continue
 
-            ultim_stop = stops[-1]
+        ultim_stop = stops[-1]
 
-            ultim_stop_id = normalitzar_text(
-                ultim_stop.get("stop_id")
+        ultim_stop_id = normalitzar_text(
+            ultim_stop.get(
+                "stop_id"
             )
+        )
 
-            # Només considerem arribat si tenim realtime
-            # coherent de la seva última parada.
-            if ultim_stop_id in stops_antics:
+        antic_ultim = stops_antics.get(
+            ultim_stop_id
+        )
 
-                antic_ultim = stops_antics[ultim_stop_id]
+        if antic_ultim:
 
-                if realtime_es_coherent(
-                    ultim_stop,
-                    antic_ultim
-                ):
-                    tren["arrived"] = True
+            if realtime_es_coherent(
+                ultim_stop,
+                antic_ultim
+            ):
+
+                tren["arrived"] = True
+
+    print()
+    print(
+        "♻️ Realtime anterior:"
+    )
 
     print(
-        f"♻️ Realtime anterior: "
-        f"{conservats} parades conservades, "
-        f"{descartats} parades descartades"
+        f"   ✅ {conservats} parades conservades"
     )
-
-
-# ============================================================
-# DESCARREGAR GTFS
-# ============================================================
-
-def descarregar_gtfs():
-
-    print("📥 Descarregant GTFS Renfe...")
-
-    response = requests.get(
-        GTFS_URL,
-        timeout=60
-    )
-
-    response.raise_for_status()
 
     print(
-        f"✅ GTFS descarregat: "
-        f"{len(response.content)} bytes"
-    )
-
-    return zipfile.ZipFile(
-        io.BytesIO(response.content)
+        f"   🧹 {descartats} parades descartades"
     )
 
 
@@ -383,7 +592,9 @@ def descarregar_gtfs():
 
 def generar_dades():
 
-    avui = datetime.now(TZ).date()
+    avui = datetime.now(
+        TZ
+    ).date()
 
     data_str = avui.isoformat()
 
@@ -393,32 +604,102 @@ def generar_dades():
     )
 
     print()
-    print("======================================")
-    print("🚆 COLLECT R15")
-    print("======================================")
-    print(f"📅 Data: {data_str}")
+    print(
+        "======================================"
+    )
+    print(
+        "🚆 COLLECT R15"
+    )
+    print(
+        "======================================"
+    )
+
+    print(
+        f"📅 Data: {data_str}"
+    )
+
     print()
 
     # --------------------------------------------------------
-    # JSON ANTIC
+    # CARREGAR JSON ANTERIOR
     # --------------------------------------------------------
 
-    dades_anteriors = carregar_json_anterior(
-        data_path
+    dades_anteriors = (
+        carregar_json_anterior(
+            data_path
+        )
     )
 
     if dades_anteriors:
+
         print(
-            f"♻️ JSON anterior trobat: {data_path}"
+            f"♻️ JSON anterior trobat: "
+            f"{data_path}"
         )
+
     else:
-        print("ℹ️ No hi ha JSON anterior")
+
+        print(
+            "ℹ️ No hi ha JSON anterior"
+        )
 
     # --------------------------------------------------------
-    # GTFS
+    # DESCARREGAR GTFS
     # --------------------------------------------------------
 
-    z = descarregar_gtfs()
+    try:
+
+        z = descarregar_gtfs()
+
+    except Exception as e:
+
+        print()
+        print(
+            "⚠️ No s'ha pogut actualitzar el GTFS."
+        )
+
+        print(
+            f"   Motiu: {e}"
+        )
+
+        print()
+
+        # Si tenim dades del dia anterior,
+        # NO les destruïm.
+        #
+        # Això permet que realtime.py continue
+        # treballant amb les dades existents.
+
+        if dades_anteriors:
+
+            print(
+                "♻️ Es conservarà el JSON existent."
+            )
+
+            print(
+                "➡️ realtime.py podrà continuar."
+            )
+
+            print()
+            print(
+                "✅ COLLECT FINALITZAT "
+                "AMB DADES ANTERIORS"
+            )
+
+            return
+
+        # Si no tenim cap JSON anterior,
+        # no tenim cap base sobre la qual treballar.
+
+        print(
+            "❌ No existeixen dades anteriors."
+        )
+
+        raise
+
+    # --------------------------------------------------------
+    # LLEGIR GTFS
+    # --------------------------------------------------------
 
     routes = carregar_csv(
         z,
@@ -446,11 +727,26 @@ def generar_dades():
     )
 
     print()
-    print(f"Routes: {len(routes)}")
-    print(f"Trips: {len(trips)}")
-    print(f"Stop times: {len(stop_times)}")
-    print(f"Stops: {len(stops)}")
-    print(f"Calendar: {len(calendar)}")
+    print(
+        f"Routes: {len(routes)}"
+    )
+
+    print(
+        f"Trips: {len(trips)}"
+    )
+
+    print(
+        f"Stop times: {len(stop_times)}"
+    )
+
+    print(
+        f"Stops: {len(stops)}"
+    )
+
+    print(
+        f"Calendar: {len(calendar)}"
+    )
+
     print()
 
     # --------------------------------------------------------
@@ -458,12 +754,16 @@ def generar_dades():
     # --------------------------------------------------------
 
     stops_by_id = {
-        normalitzar_text(s.get("stop_id")): s
+        normalitzar_text(
+            s.get("stop_id")
+        ): s
         for s in stops
     }
 
     trips_by_id = {
-        normalitzar_text(t.get("trip_id")): t
+        normalitzar_text(
+            t.get("trip_id")
+        ): t
         for t in trips
     }
 
@@ -483,7 +783,9 @@ def generar_dades():
         "sunday"
     ]
 
-    weekday_field = weekday_fields[weekday]
+    weekday_field = weekday_fields[
+        weekday
+    ]
 
     serveis_valids = set()
 
@@ -500,12 +802,19 @@ def generar_dades():
         if not start or not end:
             continue
 
-        if not (start <= data_str <= end):
+        if not (
+            start
+            <= data_str
+            <= end
+        ):
             continue
 
         if normalitzar_text(
-            cal.get(weekday_field)
+            cal.get(
+                weekday_field
+            )
         ) != "1":
+
             continue
 
         service_id = normalitzar_text(
@@ -513,7 +822,10 @@ def generar_dades():
         )
 
         if service_id:
-            serveis_valids.add(service_id)
+
+            serveis_valids.add(
+                service_id
+            )
 
     print(
         f"📆 Serveis vàlids avui: "
@@ -525,6 +837,16 @@ def generar_dades():
     # --------------------------------------------------------
 
     trips_r15 = []
+
+    # Crear diccionari de routes
+    # per no haver de buscar-les cada vegada.
+
+    routes_by_id = {
+        normalitzar_text(
+            r.get("route_id")
+        ): r
+        for r in routes
+    }
 
     for trip in trips:
 
@@ -543,27 +865,23 @@ def generar_dades():
         if not trip_id:
             continue
 
-        # R15
-        route = next(
-            (
-                r
-                for r in routes
-                if normalitzar_text(
-                    r.get("route_id")
-                ) == route_id
-            ),
-            None
+        route = routes_by_id.get(
+            route_id
         )
 
         if not route:
             continue
 
         route_short_name = normalitzar_text(
-            route.get("route_short_name")
+            route.get(
+                "route_short_name"
+            )
         )
 
         route_long_name = normalitzar_text(
-            route.get("route_long_name")
+            route.get(
+                "route_long_name"
+            )
         )
 
         if (
@@ -575,7 +893,9 @@ def generar_dades():
         if service_id not in serveis_valids:
             continue
 
-        trips_r15.append(trip)
+        trips_r15.append(
+            trip
+        )
 
     print(
         f"🚆 Trips R15 avui: "
@@ -598,9 +918,16 @@ def generar_dades():
             continue
 
         if trip_id not in stop_times_by_trip:
-            stop_times_by_trip[trip_id] = []
 
-        stop_times_by_trip[trip_id].append(st)
+            stop_times_by_trip[
+                trip_id
+            ] = []
+
+        stop_times_by_trip[
+            trip_id
+        ].append(
+            st
+        )
 
     # --------------------------------------------------------
     # GENERAR CIRCULACIONS
@@ -614,18 +941,24 @@ def generar_dades():
             trip.get("trip_id")
         )
 
-        trip_stop_times = stop_times_by_trip.get(
-            trip_id,
-            []
+        trip_stop_times = (
+            stop_times_by_trip.get(
+                trip_id,
+                []
+            )
         )
 
         if not trip_stop_times:
             continue
 
-        # Ordenem per stop_sequence
+        # Ordenar per stop_sequence
+
         trip_stop_times.sort(
             key=lambda x: int(
-                x.get("stop_sequence", "0")
+                x.get(
+                    "stop_sequence",
+                    "0"
+                )
                 or "0"
             )
         )
@@ -638,36 +971,53 @@ def generar_dades():
                 st.get("stop_id")
             )
 
-            stop = stops_by_id.get(stop_id)
+            stop = stops_by_id.get(
+                stop_id
+            )
 
             if not stop:
                 continue
 
-            arrival = minuts_des_de_mitjanit(
-                st.get("arrival_time")
+            arrival = (
+                minuts_des_de_mitjanit(
+                    st.get(
+                        "arrival_time"
+                    )
+                )
             )
 
-            departure = minuts_des_de_mitjanit(
-                st.get("departure_time")
+            departure = (
+                minuts_des_de_mitjanit(
+                    st.get(
+                        "departure_time"
+                    )
+                )
             )
 
-            if arrival is None and departure is None:
+            if (
+                arrival is None
+                and departure is None
+            ):
                 continue
 
-            theoretical = arrival
-
-            if theoretical is None:
-                theoretical = departure
-
             stop_data = {
+
                 "station": normalitzar_text(
-                    stop.get("stop_name")
+                    stop.get(
+                        "stop_name"
+                    )
                 ),
+
                 "stop_id": stop_id,
+
                 "scheduled_arrival": arrival,
+
                 "scheduled_departure": departure,
+
                 "actual_minutes": None,
+
                 "actual_time": None,
+
                 "delay_minutes": None
             }
 
@@ -682,30 +1032,48 @@ def generar_dades():
         # DIRECCIÓ
         # ----------------------------------------------------
 
-        first_station = stops_tren[0]["station"]
-        last_station = stops_tren[-1]["station"]
+        first_station = (
+            stops_tren[0]["station"]
+        )
+
+        last_station = (
+            stops_tren[-1]["station"]
+        )
 
         direction = ""
 
         if "Barcelona" in last_station:
+
             direction = "Barcelona"
 
         elif "Reus" in last_station:
+
             direction = "Reus"
 
         else:
+
             direction = last_station
 
         circulacio = {
+
             "train_id": trip_id,
+
             "trip_id": trip_id,
+
             "route_id": normalitzar_text(
-                trip.get("route_id")
+                trip.get(
+                    "route_id"
+                )
             ),
+
             "direction": direction,
+
             "started": False,
+
             "arrived": False,
+
             "final_delay_minutes": 0,
+
             "stops": stops_tren
         }
 
@@ -719,7 +1087,10 @@ def generar_dades():
 
     def hora_sort(tren):
 
-        stops = tren.get("stops", [])
+        stops = tren.get(
+            "stops",
+            []
+        )
 
         if not stops:
             return 9999
@@ -729,6 +1100,7 @@ def generar_dades():
         )
 
         if value is None:
+
             value = stops[0].get(
                 "scheduled_arrival"
             )
@@ -748,7 +1120,7 @@ def generar_dades():
     )
 
     # ========================================================
-    # CONSERVAR REALTIME ANTIC
+    # CONSERVAR REALTIME VÀLID
     # ========================================================
 
     conservar_realtime_anterior(
@@ -766,11 +1138,15 @@ def generar_dades():
     )
 
     dades = {
+
         "date": data_str,
+
         "generated_at": datetime.now(
             TZ
         ).isoformat(),
+
         "source": "Renfe GTFS",
+
         "trains": circulacions
     }
 
@@ -793,11 +1169,14 @@ def generar_dades():
     )
 
     print(
-        f"🚆 Trens: {len(circulacions)}"
+        f"🚆 Trens: "
+        f"{len(circulacions)}"
     )
 
     print()
-    print("✅ COLLECT FINALITZAT")
+    print(
+        "✅ COLLECT FINALITZAT"
+    )
 
 
 # ============================================================
@@ -805,4 +1184,5 @@ def generar_dades():
 # ============================================================
 
 if __name__ == "__main__":
+
     generar_dades()
