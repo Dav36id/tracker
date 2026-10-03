@@ -132,7 +132,28 @@ print(
     "Trips amb informació:",
     len(realtime_trips)
 )
+print()
+print("=== TRIP IDs GTFS-RT ===")
 
+for trip_id in realtime_trips:
+    print(
+        "GTFS-RT:",
+        repr(trip_id)
+    )
+
+print()
+print("=== TRIP IDs DEL JSON ===")
+
+for train in dades.get("trains", []):
+    print(
+        "JSON:",
+        repr(
+            train.get("train_id")
+        )
+    )
+
+print()
+print("==========================================")
 
 # ============================================================
 # FUNCIONS DE TEMPS
