@@ -253,6 +253,287 @@ def hora_a_iso(
 
 
 # ============================================================
+# CARREGAR JSON ANTERIOR
+#
+# IMPORTANT:
+# collect.py s'executa cada 5 minuts.
+#
+# Abans de reconstruir el JSON, carreguem el fitxer anterior
+# per conservar les dades realtime que ja s'havien obtingut.
+# ============================================================
+
+def carregar_json_anterior():
+
+    output_file = os.path.join(
+        OUTPUT_DIR,
+        f"{DATA.isoformat()}.json"
+    )
+
+    if not os.path.exists(
+        output_file
+    ):
+
+        print(
+            "No existeix JSON anterior."
+        )
+
+        return None
+
+    try:
+
+        with open(
+            output_file,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            dades = json.load(f)
+
+        print(
+            "JSON anterior carregat:",
+            output_file
+        )
+
+        return dades
+
+    except Exception as e:
+
+        print(
+            "AVÍS: no s'ha pogut carregar "
+            "el JSON anterior:",
+            repr(e)
+        )
+
+        return None
+
+
+# ============================================================
+# CONSERVAR REALTIME ANTERIOR
+#
+# Copiem les dades realtime del JSON anterior al nou JSON.
+#
+# Es fa:
+#
+#   train_id
+#       ↓
+#   stop_id
+#       ↓
+#   dades realtime
+#
+# Això permet acumular les actualitzacions durant tot el dia.
+# ============================================================
+
+def conservar_realtime_anterior(
+    circulacions,
+    dades_anteriors
+):
+
+    if not dades_anteriors:
+
+        print(
+            "No hi ha dades realtime anteriors."
+        )
+
+        return 0, 0
+
+    trens_anteriors = {}
+
+    for train in dades_anteriors.get(
+        "trains",
+        []
+    ):
+
+        train_id = normalitzar_id(
+            train.get(
+                "train_id"
+            )
+        )
+
+        if train_id:
+
+            trens_anteriors[
+                train_id
+            ] = train
+
+    trens_conservats = 0
+    parades_conservades = 0
+
+    for train in circulacions:
+
+        train_id = normalitzar_id(
+            train.get(
+                "train_id"
+            )
+        )
+
+        train_anterior = (
+            trens_anteriors.get(
+                train_id
+            )
+        )
+
+        if train_anterior is None:
+
+            continue
+
+        # ----------------------------------------------------
+        # CONSERVAR ESTAT DEL TREN
+        # ----------------------------------------------------
+
+        if (
+            train_anterior.get(
+                "started"
+            )
+            is not None
+        ):
+
+            train["started"] = (
+                train_anterior.get(
+                    "started"
+                )
+            )
+
+        if (
+            train_anterior.get(
+                "arrived"
+            )
+            is not None
+        ):
+
+            train["arrived"] = (
+                train_anterior.get(
+                    "arrived"
+                )
+            )
+
+        if (
+            train_anterior.get(
+                "final_delay_minutes"
+            )
+            is not None
+        ):
+
+            train[
+                "final_delay_minutes"
+            ] = train_anterior.get(
+                "final_delay_minutes"
+            )
+
+        # ----------------------------------------------------
+        # INDEXAR PARADES ANTERIORS
+        # ----------------------------------------------------
+
+        parades_anteriors = {}
+
+        for stop in train_anterior.get(
+            "stops",
+            []
+        ):
+
+            stop_id = normalitzar_id(
+                stop.get(
+                    "stop_id"
+                )
+            )
+
+            if stop_id:
+
+                parades_anteriors[
+                    stop_id
+                ] = stop
+
+        # ----------------------------------------------------
+        # RECUPERAR REALTIME DE CADA PARADA
+        # ----------------------------------------------------
+
+        realtime_train_conservat = False
+
+        for stop in train.get(
+            "stops",
+            []
+        ):
+
+            stop_id = normalitzar_id(
+                stop.get(
+                    "stop_id"
+                )
+            )
+
+            anterior = (
+                parades_anteriors.get(
+                    stop_id
+                )
+            )
+
+            if anterior is None:
+
+                continue
+
+            # -----------------------------------------------
+            # actual_minutes
+            # -----------------------------------------------
+
+            if (
+                anterior.get(
+                    "actual_minutes"
+                )
+                is not None
+            ):
+
+                stop[
+                    "actual_minutes"
+                ] = anterior.get(
+                    "actual_minutes"
+                )
+
+                realtime_train_conservat = True
+                parades_conservades += 1
+
+            # -----------------------------------------------
+            # actual_time
+            # -----------------------------------------------
+
+            if (
+                anterior.get(
+                    "actual_time"
+                )
+                is not None
+            ):
+
+                stop[
+                    "actual_time"
+                ] = anterior.get(
+                    "actual_time"
+                )
+
+            # -----------------------------------------------
+            # delay_minutes
+            # -----------------------------------------------
+
+            if (
+                anterior.get(
+                    "delay_minutes"
+                )
+                is not None
+            ):
+
+                stop[
+                    "delay_minutes"
+                ] = anterior.get(
+                    "delay_minutes"
+                )
+
+        if realtime_train_conservat:
+
+            trens_conservats += 1
+
+    return (
+        trens_conservats,
+        parades_conservades
+    )
+
+
+# ============================================================
 # MAIN
 # ============================================================
 
@@ -271,6 +552,14 @@ def main():
     )
     print(
         "=========================================="
+    )
+
+    # --------------------------------------------------------
+    # CARREGAR JSON ANTERIOR
+    # --------------------------------------------------------
+
+    dades_anteriors = (
+        carregar_json_anterior()
     )
 
     # --------------------------------------------------------
@@ -467,9 +756,6 @@ def main():
 
     # --------------------------------------------------------
     # INDEXAR STOP_TIMES
-    #
-    # IMPORTANT:
-    # aquí normalitzem TAMBÉ els trip_id.
     # --------------------------------------------------------
 
     parades = defaultdict(list)
@@ -600,8 +886,6 @@ def main():
             []
         )
 
-        # Sense parades no podem mostrar
-        # la circulació.
         if not stops_trip:
 
             continue
@@ -634,7 +918,6 @@ def main():
             .upper()
         )
 
-        # Intentem identificar Barcelona.
         es_barcelona = (
             "BARCELONA"
             in nom_primera
@@ -663,10 +946,6 @@ def main():
 
         elif passa_reus:
 
-            # Si el tram R15 conté Reus però
-            # no identifica Barcelona en el mateix
-            # trip, mantenim el sentit segons
-            # la posició de Reus.
             if (
                 reus_stop_ids
                 and
@@ -682,8 +961,6 @@ def main():
 
         else:
 
-            # Altres trams R15 que no passen per Reus
-            # no ens interessen per al tracker
             continue
 
         # ----------------------------------------------------
@@ -778,6 +1055,33 @@ def main():
         )
 
     # --------------------------------------------------------
+    # CONSERVAR REALTIME ANTERIOR
+    # --------------------------------------------------------
+
+    (
+        trens_conservats,
+        parades_conservades
+    ) = conservar_realtime_anterior(
+        circulacions,
+        dades_anteriors
+    )
+
+    print()
+    print(
+        "Realtime conservat:"
+    )
+
+    print(
+        "  Trens:",
+        trens_conservats
+    )
+
+    print(
+        "  Parades:",
+        parades_conservades
+    )
+
+    # --------------------------------------------------------
     # ORDENAR
     # --------------------------------------------------------
 
@@ -814,6 +1118,38 @@ def main():
             circulacions
 
     }
+
+    # --------------------------------------------------------
+    # CONSERVAR INFORMACIÓ GENERAL DEL REALTIME
+    # --------------------------------------------------------
+
+    if dades_anteriors:
+
+        if (
+            dades_anteriors.get(
+                "realtime_updated_at"
+            )
+            is not None
+        ):
+
+            resultat[
+                "realtime_updated_at"
+            ] = dades_anteriors.get(
+                "realtime_updated_at"
+            )
+
+        if (
+            dades_anteriors.get(
+                "realtime_last_run"
+            )
+            is not None
+        ):
+
+            resultat[
+                "realtime_last_run"
+            ] = dades_anteriors.get(
+                "realtime_last_run"
+            )
 
     # --------------------------------------------------------
     # CREAR DIRECTORI
@@ -878,6 +1214,14 @@ def main():
             if t["direction"]
             == "REUS_BAR"
         )
+    )
+
+    print(
+        "Realtime conservat:",
+        trens_conservats,
+        "trens /",
+        parades_conservades,
+        "parades"
     )
 
     print(
