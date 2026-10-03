@@ -1,0 +1,2669 @@
+{
+  "source": "Renfe Data",
+  "source_type": "GTFS",
+  "generated_at": "2026-10-03T11:58:47.612659+00:00",
+  "date": "2026-10-03",
+  "line": "R15",
+  "trains": [
+    {
+      "train_id": "5174S15000R15",
+      "route_id": "51T0123R15",
+      "service_id": "5174S",
+      "direction": "REUS_BAR",
+      "departure": "2026-10-03T05:36:00",
+      "arrival": "2026-10-03T07:24:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 336,
+          "scheduled_departure": 336,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 345,
+          "scheduled_departure": 345,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 354,
+          "scheduled_departure": 356,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 365,
+          "scheduled_departure": 365,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 369,
+          "scheduled_departure": 370,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 379,
+          "scheduled_departure": 380,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 391,
+          "scheduled_departure": 392,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 427,
+          "scheduled_departure": 429,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 433,
+          "scheduled_departure": 434,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 444,
+          "scheduled_departure": 444,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S30531R15",
+      "route_id": "51T0163R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T06:15:00",
+      "arrival": "2026-10-03T09:08:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 375,
+          "scheduled_departure": 375,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 385,
+          "scheduled_departure": 386,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 391,
+          "scheduled_departure": 393,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 425,
+          "scheduled_departure": 426,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 438,
+          "scheduled_departure": 439,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 448,
+          "scheduled_departure": 449,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 452,
+          "scheduled_departure": 452,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 462,
+          "scheduled_departure": 464,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 472,
+          "scheduled_departure": 472,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 483,
+          "scheduled_departure": 485,
+          "actual_minutes": null
+        },
+        {
+          "station": "Les Borges del Camp",
+          "stop_id": "71307",
+          "scheduled_arrival": 495,
+          "scheduled_departure": 495,
+          "actual_minutes": null
+        },
+        {
+          "station": "Riudecanyes-Botarell",
+          "stop_id": "71306",
+          "scheduled_arrival": 502,
+          "scheduled_departure": 502,
+          "actual_minutes": null
+        },
+        {
+          "station": "Duesaigües-L'Argentera",
+          "stop_id": "71305",
+          "scheduled_arrival": 510,
+          "scheduled_departure": 510,
+          "actual_minutes": null
+        },
+        {
+          "station": "Pradell",
+          "stop_id": "71304",
+          "scheduled_arrival": 518,
+          "scheduled_departure": 518,
+          "actual_minutes": null
+        },
+        {
+          "station": "Marçà-Falset",
+          "stop_id": "71303",
+          "scheduled_arrival": 524,
+          "scheduled_departure": 525,
+          "actual_minutes": null
+        },
+        {
+          "station": "Capçanes",
+          "stop_id": "71302",
+          "scheduled_arrival": 533,
+          "scheduled_departure": 533,
+          "actual_minutes": null
+        },
+        {
+          "station": "Móra la Nova",
+          "stop_id": "71300",
+          "scheduled_arrival": 548,
+          "scheduled_departure": 548,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S30530R15",
+      "route_id": "51T0164R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T06:31:00",
+      "arrival": "2026-10-03T09:24:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Móra la Nova",
+          "stop_id": "71300",
+          "scheduled_arrival": 391,
+          "scheduled_departure": 391,
+          "actual_minutes": null
+        },
+        {
+          "station": "Capçanes",
+          "stop_id": "71302",
+          "scheduled_arrival": 406,
+          "scheduled_departure": 406,
+          "actual_minutes": null
+        },
+        {
+          "station": "Marçà-Falset",
+          "stop_id": "71303",
+          "scheduled_arrival": 417,
+          "scheduled_departure": 418,
+          "actual_minutes": null
+        },
+        {
+          "station": "Pradell",
+          "stop_id": "71304",
+          "scheduled_arrival": 426,
+          "scheduled_departure": 426,
+          "actual_minutes": null
+        },
+        {
+          "station": "Duesaigües-L'Argentera",
+          "stop_id": "71305",
+          "scheduled_arrival": 432,
+          "scheduled_departure": 432,
+          "actual_minutes": null
+        },
+        {
+          "station": "Riudecanyes-Botarell",
+          "stop_id": "71306",
+          "scheduled_arrival": 438,
+          "scheduled_departure": 438,
+          "actual_minutes": null
+        },
+        {
+          "station": "Les Borges del Camp",
+          "stop_id": "71307",
+          "scheduled_arrival": 444,
+          "scheduled_departure": 444,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 454,
+          "scheduled_departure": 456,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 465,
+          "scheduled_departure": 465,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 474,
+          "scheduled_departure": 476,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 485,
+          "scheduled_departure": 485,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 489,
+          "scheduled_departure": 490,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 499,
+          "scheduled_departure": 500,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 511,
+          "scheduled_departure": 512,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 547,
+          "scheduled_departure": 549,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 553,
+          "scheduled_departure": 554,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 564,
+          "scheduled_departure": 564,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15003R15",
+      "route_id": "51T0124R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T07:45:00",
+      "arrival": "2026-10-03T09:33:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 465,
+          "scheduled_departure": 465,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 475,
+          "scheduled_departure": 476,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 481,
+          "scheduled_departure": 483,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 515,
+          "scheduled_departure": 516,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 528,
+          "scheduled_departure": 529,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 538,
+          "scheduled_departure": 539,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 542,
+          "scheduled_departure": 542,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 552,
+          "scheduled_departure": 554,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 562,
+          "scheduled_departure": 562,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 573,
+          "scheduled_departure": 573,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S30581R15",
+      "route_id": "51T0163R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T08:45:00",
+      "arrival": "2026-10-03T12:19:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 525,
+          "scheduled_departure": 525,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 535,
+          "scheduled_departure": 536,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 541,
+          "scheduled_departure": 543,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 575,
+          "scheduled_departure": 576,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 588,
+          "scheduled_departure": 589,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 598,
+          "scheduled_departure": 599,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 602,
+          "scheduled_departure": 602,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 612,
+          "scheduled_departure": 614,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 622,
+          "scheduled_departure": 622,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 633,
+          "scheduled_departure": 635,
+          "actual_minutes": null
+        },
+        {
+          "station": "Les Borges del Camp",
+          "stop_id": "71307",
+          "scheduled_arrival": 645,
+          "scheduled_departure": 645,
+          "actual_minutes": null
+        },
+        {
+          "station": "Marçà-Falset",
+          "stop_id": "71303",
+          "scheduled_arrival": 674,
+          "scheduled_departure": 675,
+          "actual_minutes": null
+        },
+        {
+          "station": "Capçanes",
+          "stop_id": "71302",
+          "scheduled_arrival": 683,
+          "scheduled_departure": 683,
+          "actual_minutes": null
+        },
+        {
+          "station": "Móra la Nova",
+          "stop_id": "71300",
+          "scheduled_arrival": 698,
+          "scheduled_departure": 725,
+          "actual_minutes": null
+        },
+        {
+          "station": "Ascó",
+          "stop_id": "71211",
+          "scheduled_arrival": 739,
+          "scheduled_departure": 739,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15034R15",
+      "route_id": "51T0123R15",
+      "service_id": "5174S",
+      "direction": "REUS_BAR",
+      "departure": "2026-10-03T09:06:00",
+      "arrival": "2026-10-03T10:54:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 546,
+          "scheduled_departure": 546,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 555,
+          "scheduled_departure": 555,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 564,
+          "scheduled_departure": 566,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 575,
+          "scheduled_departure": 575,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 579,
+          "scheduled_departure": 580,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 589,
+          "scheduled_departure": 590,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 601,
+          "scheduled_departure": 602,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 637,
+          "scheduled_departure": 639,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 643,
+          "scheduled_departure": 644,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 654,
+          "scheduled_departure": 654,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15006R15",
+      "route_id": "51T0123R15",
+      "service_id": "5174S",
+      "direction": "REUS_BAR",
+      "departure": "2026-10-03T09:36:00",
+      "arrival": "2026-10-03T11:24:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 576,
+          "scheduled_departure": 576,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 585,
+          "scheduled_departure": 585,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 594,
+          "scheduled_departure": 596,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 605,
+          "scheduled_departure": 605,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 609,
+          "scheduled_departure": 610,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 619,
+          "scheduled_departure": 620,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 631,
+          "scheduled_departure": 632,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 667,
+          "scheduled_departure": 669,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 673,
+          "scheduled_departure": 674,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 684,
+          "scheduled_departure": 684,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15005R15",
+      "route_id": "51T0124R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T09:45:00",
+      "arrival": "2026-10-03T11:33:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 585,
+          "scheduled_departure": 585,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 595,
+          "scheduled_departure": 596,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 601,
+          "scheduled_departure": 603,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 635,
+          "scheduled_departure": 636,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 648,
+          "scheduled_departure": 649,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 658,
+          "scheduled_departure": 659,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 662,
+          "scheduled_departure": 662,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 672,
+          "scheduled_departure": 674,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 682,
+          "scheduled_departure": 682,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 693,
+          "scheduled_departure": 693,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S30512R15",
+      "route_id": "51T0164R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T10:31:00",
+      "arrival": "2026-10-03T13:24:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Móra la Nova",
+          "stop_id": "71300",
+          "scheduled_arrival": 631,
+          "scheduled_departure": 631,
+          "actual_minutes": null
+        },
+        {
+          "station": "Capçanes",
+          "stop_id": "71302",
+          "scheduled_arrival": 646,
+          "scheduled_departure": 646,
+          "actual_minutes": null
+        },
+        {
+          "station": "Marçà-Falset",
+          "stop_id": "71303",
+          "scheduled_arrival": 657,
+          "scheduled_departure": 658,
+          "actual_minutes": null
+        },
+        {
+          "station": "Pradell",
+          "stop_id": "71304",
+          "scheduled_arrival": 666,
+          "scheduled_departure": 666,
+          "actual_minutes": null
+        },
+        {
+          "station": "Duesaigües-L'Argentera",
+          "stop_id": "71305",
+          "scheduled_arrival": 672,
+          "scheduled_departure": 672,
+          "actual_minutes": null
+        },
+        {
+          "station": "Riudecanyes-Botarell",
+          "stop_id": "71306",
+          "scheduled_arrival": 678,
+          "scheduled_departure": 678,
+          "actual_minutes": null
+        },
+        {
+          "station": "Les Borges del Camp",
+          "stop_id": "71307",
+          "scheduled_arrival": 684,
+          "scheduled_departure": 684,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 694,
+          "scheduled_departure": 696,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 705,
+          "scheduled_departure": 705,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 714,
+          "scheduled_departure": 716,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 725,
+          "scheduled_departure": 725,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 729,
+          "scheduled_departure": 730,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 739,
+          "scheduled_departure": 740,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 751,
+          "scheduled_departure": 752,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 787,
+          "scheduled_departure": 789,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 793,
+          "scheduled_departure": 794,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 804,
+          "scheduled_departure": 804,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15007R15",
+      "route_id": "51T0124R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T10:45:00",
+      "arrival": "2026-10-03T12:33:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 645,
+          "scheduled_departure": 645,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 655,
+          "scheduled_departure": 656,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 661,
+          "scheduled_departure": 663,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 695,
+          "scheduled_departure": 696,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 708,
+          "scheduled_departure": 709,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 718,
+          "scheduled_departure": 719,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 722,
+          "scheduled_departure": 722,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 732,
+          "scheduled_departure": 734,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 742,
+          "scheduled_departure": 742,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 753,
+          "scheduled_departure": 753,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15010R15",
+      "route_id": "51T0123R15",
+      "service_id": "5174S",
+      "direction": "REUS_BAR",
+      "departure": "2026-10-03T12:36:00",
+      "arrival": "2026-10-03T14:24:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 756,
+          "scheduled_departure": 756,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 765,
+          "scheduled_departure": 765,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 774,
+          "scheduled_departure": 776,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 785,
+          "scheduled_departure": 785,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 789,
+          "scheduled_departure": 790,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 799,
+          "scheduled_departure": 800,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 811,
+          "scheduled_departure": 812,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 847,
+          "scheduled_departure": 849,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 853,
+          "scheduled_departure": 854,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 864,
+          "scheduled_departure": 864,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15012R15",
+      "route_id": "51T0123R15",
+      "service_id": "5174S",
+      "direction": "REUS_BAR",
+      "departure": "2026-10-03T13:36:00",
+      "arrival": "2026-10-03T15:24:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 816,
+          "scheduled_departure": 816,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 825,
+          "scheduled_departure": 825,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 834,
+          "scheduled_departure": 836,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 845,
+          "scheduled_departure": 845,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 849,
+          "scheduled_departure": 850,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 859,
+          "scheduled_departure": 860,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 871,
+          "scheduled_departure": 872,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 907,
+          "scheduled_departure": 909,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 913,
+          "scheduled_departure": 914,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 924,
+          "scheduled_departure": 924,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15033R15",
+      "route_id": "51T0124R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T13:45:00",
+      "arrival": "2026-10-03T15:33:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 825,
+          "scheduled_departure": 825,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 835,
+          "scheduled_departure": 836,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 841,
+          "scheduled_departure": 843,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 875,
+          "scheduled_departure": 876,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 888,
+          "scheduled_departure": 889,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 898,
+          "scheduled_departure": 899,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 902,
+          "scheduled_departure": 902,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 912,
+          "scheduled_departure": 914,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 922,
+          "scheduled_departure": 922,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 933,
+          "scheduled_departure": 933,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S30514R15",
+      "route_id": "51T0164R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T14:50:00",
+      "arrival": "2026-10-03T17:24:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Capçanes",
+          "stop_id": "71302",
+          "scheduled_arrival": 890,
+          "scheduled_departure": 890,
+          "actual_minutes": null
+        },
+        {
+          "station": "Marçà-Falset",
+          "stop_id": "71303",
+          "scheduled_arrival": 901,
+          "scheduled_departure": 902,
+          "actual_minutes": null
+        },
+        {
+          "station": "Les Borges del Camp",
+          "stop_id": "71307",
+          "scheduled_arrival": 924,
+          "scheduled_departure": 924,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 934,
+          "scheduled_departure": 936,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 945,
+          "scheduled_departure": 945,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 954,
+          "scheduled_departure": 956,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 965,
+          "scheduled_departure": 965,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 969,
+          "scheduled_departure": 970,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 979,
+          "scheduled_departure": 980,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 991,
+          "scheduled_departure": 992,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1027,
+          "scheduled_departure": 1029,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1033,
+          "scheduled_departure": 1034,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1044,
+          "scheduled_departure": 1044,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S17050R15",
+      "route_id": "51T0123R15",
+      "service_id": "5174S",
+      "direction": "REUS_BAR",
+      "departure": "2026-10-03T15:06:00",
+      "arrival": "2026-10-03T16:54:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 906,
+          "scheduled_departure": 906,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 915,
+          "scheduled_departure": 915,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 924,
+          "scheduled_departure": 926,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 935,
+          "scheduled_departure": 935,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 939,
+          "scheduled_departure": 940,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 949,
+          "scheduled_departure": 950,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 961,
+          "scheduled_departure": 962,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 997,
+          "scheduled_departure": 999,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1003,
+          "scheduled_departure": 1004,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1014,
+          "scheduled_departure": 1014,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15013R15",
+      "route_id": "51T0124R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T15:15:00",
+      "arrival": "2026-10-03T17:03:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 915,
+          "scheduled_departure": 915,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 925,
+          "scheduled_departure": 926,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 931,
+          "scheduled_departure": 933,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 965,
+          "scheduled_departure": 966,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 978,
+          "scheduled_departure": 979,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 988,
+          "scheduled_departure": 989,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 992,
+          "scheduled_departure": 992,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1002,
+          "scheduled_departure": 1004,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1012,
+          "scheduled_departure": 1012,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1023,
+          "scheduled_departure": 1023,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S30503R15",
+      "route_id": "51T0163R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T15:45:00",
+      "arrival": "2026-10-03T19:18:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 945,
+          "scheduled_departure": 945,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 955,
+          "scheduled_departure": 956,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 961,
+          "scheduled_departure": 963,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 995,
+          "scheduled_departure": 996,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1008,
+          "scheduled_departure": 1009,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1018,
+          "scheduled_departure": 1019,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1022,
+          "scheduled_departure": 1022,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1032,
+          "scheduled_departure": 1034,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1042,
+          "scheduled_departure": 1042,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1053,
+          "scheduled_departure": 1055,
+          "actual_minutes": null
+        },
+        {
+          "station": "Les Borges del Camp",
+          "stop_id": "71307",
+          "scheduled_arrival": 1065,
+          "scheduled_departure": 1065,
+          "actual_minutes": null
+        },
+        {
+          "station": "Marçà-Falset",
+          "stop_id": "71303",
+          "scheduled_arrival": 1090,
+          "scheduled_departure": 1091,
+          "actual_minutes": null
+        },
+        {
+          "station": "Capçanes",
+          "stop_id": "71302",
+          "scheduled_arrival": 1099,
+          "scheduled_departure": 1099,
+          "actual_minutes": null
+        },
+        {
+          "station": "Móra la Nova",
+          "stop_id": "71300",
+          "scheduled_arrival": 1114,
+          "scheduled_departure": 1144,
+          "actual_minutes": null
+        },
+        {
+          "station": "Ascó",
+          "stop_id": "71211",
+          "scheduled_arrival": 1158,
+          "scheduled_departure": 1158,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15016R15",
+      "route_id": "51T0123R15",
+      "service_id": "5174S",
+      "direction": "REUS_BAR",
+      "departure": "2026-10-03T16:36:00",
+      "arrival": "2026-10-03T18:24:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 996,
+          "scheduled_departure": 996,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1005,
+          "scheduled_departure": 1005,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1014,
+          "scheduled_departure": 1016,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1025,
+          "scheduled_departure": 1025,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1029,
+          "scheduled_departure": 1030,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1039,
+          "scheduled_departure": 1040,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1051,
+          "scheduled_departure": 1052,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1087,
+          "scheduled_departure": 1089,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1093,
+          "scheduled_departure": 1094,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1104,
+          "scheduled_departure": 1104,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S30535R15",
+      "route_id": "51T0163R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T17:15:00",
+      "arrival": "2026-10-03T20:10:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1035,
+          "scheduled_departure": 1035,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1045,
+          "scheduled_departure": 1046,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1051,
+          "scheduled_departure": 1053,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1085,
+          "scheduled_departure": 1086,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1098,
+          "scheduled_departure": 1099,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1108,
+          "scheduled_departure": 1109,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1112,
+          "scheduled_departure": 1112,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1122,
+          "scheduled_departure": 1124,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1132,
+          "scheduled_departure": 1132,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1143,
+          "scheduled_departure": 1145,
+          "actual_minutes": null
+        },
+        {
+          "station": "Les Borges del Camp",
+          "stop_id": "71307",
+          "scheduled_arrival": 1155,
+          "scheduled_departure": 1155,
+          "actual_minutes": null
+        },
+        {
+          "station": "Marçà-Falset",
+          "stop_id": "71303",
+          "scheduled_arrival": 1186,
+          "scheduled_departure": 1187,
+          "actual_minutes": null
+        },
+        {
+          "station": "Capçanes",
+          "stop_id": "71302",
+          "scheduled_arrival": 1195,
+          "scheduled_departure": 1195,
+          "actual_minutes": null
+        },
+        {
+          "station": "Móra la Nova",
+          "stop_id": "71300",
+          "scheduled_arrival": 1210,
+          "scheduled_departure": 1210,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15020R15",
+      "route_id": "51T0123R15",
+      "service_id": "5174S",
+      "direction": "REUS_BAR",
+      "departure": "2026-10-03T18:06:00",
+      "arrival": "2026-10-03T19:54:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1086,
+          "scheduled_departure": 1086,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1095,
+          "scheduled_departure": 1095,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1104,
+          "scheduled_departure": 1106,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1115,
+          "scheduled_departure": 1115,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1119,
+          "scheduled_departure": 1120,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1129,
+          "scheduled_departure": 1130,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1141,
+          "scheduled_departure": 1142,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1177,
+          "scheduled_departure": 1179,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1183,
+          "scheduled_departure": 1184,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1194,
+          "scheduled_departure": 1194,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15017R15",
+      "route_id": "51T0124R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T18:15:00",
+      "arrival": "2026-10-03T20:03:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1095,
+          "scheduled_departure": 1095,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1105,
+          "scheduled_departure": 1106,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1111,
+          "scheduled_departure": 1113,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1145,
+          "scheduled_departure": 1146,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1158,
+          "scheduled_departure": 1159,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1168,
+          "scheduled_departure": 1169,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1172,
+          "scheduled_departure": 1172,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1182,
+          "scheduled_departure": 1184,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1192,
+          "scheduled_departure": 1192,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1203,
+          "scheduled_departure": 1203,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S30519R15",
+      "route_id": "51T0163R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T18:45:00",
+      "arrival": "2026-10-03T21:39:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1125,
+          "scheduled_departure": 1125,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1135,
+          "scheduled_departure": 1136,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1141,
+          "scheduled_departure": 1143,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1175,
+          "scheduled_departure": 1176,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1188,
+          "scheduled_departure": 1189,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1198,
+          "scheduled_departure": 1199,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1202,
+          "scheduled_departure": 1202,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1212,
+          "scheduled_departure": 1214,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1222,
+          "scheduled_departure": 1222,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1233,
+          "scheduled_departure": 1234,
+          "actual_minutes": null
+        },
+        {
+          "station": "Les Borges del Camp",
+          "stop_id": "71307",
+          "scheduled_arrival": 1244,
+          "scheduled_departure": 1244,
+          "actual_minutes": null
+        },
+        {
+          "station": "Riudecanyes-Botarell",
+          "stop_id": "71306",
+          "scheduled_arrival": 1251,
+          "scheduled_departure": 1251,
+          "actual_minutes": null
+        },
+        {
+          "station": "Duesaigües-L'Argentera",
+          "stop_id": "71305",
+          "scheduled_arrival": 1259,
+          "scheduled_departure": 1259,
+          "actual_minutes": null
+        },
+        {
+          "station": "Pradell",
+          "stop_id": "71304",
+          "scheduled_arrival": 1267,
+          "scheduled_departure": 1267,
+          "actual_minutes": null
+        },
+        {
+          "station": "Marçà-Falset",
+          "stop_id": "71303",
+          "scheduled_arrival": 1275,
+          "scheduled_departure": 1276,
+          "actual_minutes": null
+        },
+        {
+          "station": "Capçanes",
+          "stop_id": "71302",
+          "scheduled_arrival": 1284,
+          "scheduled_departure": 1284,
+          "actual_minutes": null
+        },
+        {
+          "station": "Móra la Nova",
+          "stop_id": "71300",
+          "scheduled_arrival": 1299,
+          "scheduled_departure": 1299,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S30586R15",
+      "route_id": "51T0164R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T19:20:00",
+      "arrival": "2026-10-03T21:54:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Capçanes",
+          "stop_id": "71302",
+          "scheduled_arrival": 1160,
+          "scheduled_departure": 1160,
+          "actual_minutes": null
+        },
+        {
+          "station": "Marçà-Falset",
+          "stop_id": "71303",
+          "scheduled_arrival": 1171,
+          "scheduled_departure": 1172,
+          "actual_minutes": null
+        },
+        {
+          "station": "Les Borges del Camp",
+          "stop_id": "71307",
+          "scheduled_arrival": 1194,
+          "scheduled_departure": 1194,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1204,
+          "scheduled_departure": 1206,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1215,
+          "scheduled_departure": 1215,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1224,
+          "scheduled_departure": 1226,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1235,
+          "scheduled_departure": 1235,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1239,
+          "scheduled_departure": 1240,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1249,
+          "scheduled_departure": 1250,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1261,
+          "scheduled_departure": 1262,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1297,
+          "scheduled_departure": 1299,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1303,
+          "scheduled_departure": 1304,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1314,
+          "scheduled_departure": 1314,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15022R15",
+      "route_id": "51T0123R15",
+      "service_id": "5174S",
+      "direction": "REUS_BAR",
+      "departure": "2026-10-03T19:36:00",
+      "arrival": "2026-10-03T21:24:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1176,
+          "scheduled_departure": 1176,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1185,
+          "scheduled_departure": 1185,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1194,
+          "scheduled_departure": 1196,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1205,
+          "scheduled_departure": 1205,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1209,
+          "scheduled_departure": 1210,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1219,
+          "scheduled_departure": 1220,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1231,
+          "scheduled_departure": 1232,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1267,
+          "scheduled_departure": 1269,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1273,
+          "scheduled_departure": 1274,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1284,
+          "scheduled_departure": 1284,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15039R15",
+      "route_id": "51T0124R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T19:45:00",
+      "arrival": "2026-10-03T21:33:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1185,
+          "scheduled_departure": 1185,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1195,
+          "scheduled_departure": 1196,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1201,
+          "scheduled_departure": 1203,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1235,
+          "scheduled_departure": 1236,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1248,
+          "scheduled_departure": 1249,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1258,
+          "scheduled_departure": 1259,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1262,
+          "scheduled_departure": 1262,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1272,
+          "scheduled_departure": 1274,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1282,
+          "scheduled_departure": 1282,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1293,
+          "scheduled_departure": 1293,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15024R15",
+      "route_id": "51T0123R15",
+      "service_id": "5174S",
+      "direction": "REUS_BAR",
+      "departure": "2026-10-03T21:06:00",
+      "arrival": "2026-10-03T22:54:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1266,
+          "scheduled_departure": 1266,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1275,
+          "scheduled_departure": 1275,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1284,
+          "scheduled_departure": 1286,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1295,
+          "scheduled_departure": 1295,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1299,
+          "scheduled_departure": 1300,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1309,
+          "scheduled_departure": 1310,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1321,
+          "scheduled_departure": 1322,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1357,
+          "scheduled_departure": 1359,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1363,
+          "scheduled_departure": 1364,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1374,
+          "scheduled_departure": 1374,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15021R15",
+      "route_id": "51T0124R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T21:15:00",
+      "arrival": "2026-10-03T23:03:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1275,
+          "scheduled_departure": 1275,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1285,
+          "scheduled_departure": 1286,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1291,
+          "scheduled_departure": 1293,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1325,
+          "scheduled_departure": 1326,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1338,
+          "scheduled_departure": 1339,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1348,
+          "scheduled_departure": 1349,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1352,
+          "scheduled_departure": 1352,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1362,
+          "scheduled_departure": 1364,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1372,
+          "scheduled_departure": 1372,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1383,
+          "scheduled_departure": 1383,
+          "actual_minutes": null
+        }
+      ]
+    },
+    {
+      "train_id": "5174S15023R15",
+      "route_id": "51T0124R15",
+      "service_id": "5174S",
+      "direction": "BAR_REUS",
+      "departure": "2026-10-03T21:45:00",
+      "arrival": "2026-10-03T23:33:00",
+      "started": false,
+      "arrived": false,
+      "final_delay_minutes": 0,
+      "stops": [
+        {
+          "station": "Barcelona Estació de França",
+          "stop_id": "79400",
+          "scheduled_arrival": 1305,
+          "scheduled_departure": 1305,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Passeig de Gràcia",
+          "stop_id": "71802",
+          "scheduled_arrival": 1315,
+          "scheduled_departure": 1316,
+          "actual_minutes": null
+        },
+        {
+          "station": "Barcelona-Sants",
+          "stop_id": "71801",
+          "scheduled_arrival": 1321,
+          "scheduled_departure": 1323,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vilanova i la Geltrú",
+          "stop_id": "71700",
+          "scheduled_arrival": 1355,
+          "scheduled_departure": 1356,
+          "actual_minutes": null
+        },
+        {
+          "station": "Sant Vicenç de Calders",
+          "stop_id": "71600",
+          "scheduled_arrival": 1368,
+          "scheduled_departure": 1369,
+          "actual_minutes": null
+        },
+        {
+          "station": "Torredembarra",
+          "stop_id": "71503",
+          "scheduled_arrival": 1378,
+          "scheduled_departure": 1379,
+          "actual_minutes": null
+        },
+        {
+          "station": "Altafulla-Tamarit",
+          "stop_id": "71502",
+          "scheduled_arrival": 1382,
+          "scheduled_departure": 1382,
+          "actual_minutes": null
+        },
+        {
+          "station": "Tarragona",
+          "stop_id": "71500",
+          "scheduled_arrival": 1392,
+          "scheduled_departure": 1394,
+          "actual_minutes": null
+        },
+        {
+          "station": "Vila-seca",
+          "stop_id": "71401",
+          "scheduled_arrival": 1402,
+          "scheduled_departure": 1402,
+          "actual_minutes": null
+        },
+        {
+          "station": "Reus",
+          "stop_id": "71400",
+          "scheduled_arrival": 1413,
+          "scheduled_departure": 1413,
+          "actual_minutes": null
+        }
+      ]
+    }
+  ]
+}
