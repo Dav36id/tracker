@@ -598,13 +598,36 @@ function getStatusText(
 
 function getTrainId(train) {
 
-    return (
+    const id =
         train.train_id ||
         train.trip_id ||
         train.id ||
         train.tripId ||
-        "Tren"
-    );
+        "Tren";
+
+    /*
+     * Els IDs del GTFS són del tipus:
+     *
+     * 5174S15012R15
+     *
+     * Visualment només volem:
+     *
+     * 15012
+     *
+     * Això només modifica el text que veu l'usuari.
+     * L'ID intern del tren continua sent l'original.
+     */
+
+    const match =
+        String(id).match(
+            /^5174S(.+)R15$/
+        );
+
+    if (match) {
+        return match[1];
+    }
+
+    return id;
 }
 
 
