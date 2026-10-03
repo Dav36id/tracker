@@ -1,7 +1,7 @@
 {
   "source": "Renfe Data",
   "source_type": "GTFS + GTFS-RT",
-  "generated_at": "2026-10-03T12:16:29.937963+00:00",
+  "generated_at": "2026-10-03T12:36:18.329146+00:00",
   "date": "2026-10-03",
   "line": "R15",
   "trains": [
@@ -1024,9 +1024,9 @@
       "direction": "REUS_BAR",
       "departure": "2026-10-03T12:36:00",
       "arrival": "2026-10-03T14:24:00",
-      "started": false,
+      "started": true,
       "arrived": false,
-      "final_delay_minutes": 0,
+      "final_delay_minutes": 26,
       "stops": [
         {
           "station": "Reus",
@@ -1089,7 +1089,9 @@
           "stop_id": "71802",
           "scheduled_arrival": 853,
           "scheduled_departure": 854,
-          "actual_minutes": null
+          "actual_minutes": 878,
+          "delay_minutes": 26,
+          "actual_time": "2026-10-03T14:38:47+02:00"
         },
         {
           "station": "Barcelona Estació de França",
@@ -2666,5 +2668,5 @@
       ]
     }
   ],
-  "realtime_updated_at": "2026-10-03T14:16:30.853274+02:00"
+  "realtime_updated_at": "2026-10-03T14:36:19.194941+02:00"
 }
