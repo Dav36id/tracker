@@ -1,1 +1,48 @@
+name: R15 Collector
 
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descarregar repositori
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instal·lar dependències
+        run: |
+          pip install requests
+
+      - name: Generar horaris del dia
+        run: |
+          python collector/collect.py
+
+      - name: Actualitzar temps real
+        run: |
+          python collector/realtime.py
+
+      - name: Guardar dades al repositori
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/
+
+          if git diff --cached --quiet; then
+            echo "No hi ha canvis per guardar"
+          else
+            git commit -m "Actualitzar dades R15"
+            git push
+          fi
