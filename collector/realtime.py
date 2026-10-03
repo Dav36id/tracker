@@ -1,6 +1,7 @@
 import json
 import os
 import requests
+
 from datetime import datetime, date, timezone
 from zoneinfo import ZoneInfo
 
@@ -19,48 +20,57 @@ HEADERS = {
     "User-Agent": "R15-Tracker/1.0"
 }
 
-# Diferència màxima per considerar que una coincidència és possible
-MAX_MATCH_MINUTES = 45
+# Diferència màxima entre l'hora teòrica i la realtime
+# que acceptarem per fer un matching.
+#
+# Abans era 45 minuts.
+# Això provocava falsos matching.
+MAX_MATCH_MINUTES = 10
+
+# Diferència màxima que considerem coherent entre
+# el retard indicat pel feed i la diferència horària.
+MAX_DELAY_DIFFERENCE_MINUTES = 5
 
 
 # ============================================================
-# FUNCIONS AUXILIARS
+# UTILITATS
 # ============================================================
 
 def convertir_timestamp(timestamp):
-    """
-    Converteix timestamp Unix a datetime Europe/Madrid.
-    """
+
     try:
+
         return datetime.fromtimestamp(
             int(timestamp),
             tz=timezone.utc
         ).astimezone(TZ)
+
     except Exception:
+
         return None
 
 
 def minuts_des_de_mitjanit(dt):
-    """
-    Retorna els minuts des de mitjanit.
-    """
-    return dt.hour * 60 + dt.minute
+
+    return (
+        dt.hour * 60
+        + dt.minute
+    )
 
 
 def normalitzar_id(valor):
-    """
-    Normalitza un ID per evitar problemes d'espais.
-    """
+
     if valor is None:
         return ""
 
     return str(valor).strip()
 
 
+# ============================================================
+# CARREGAR JSON DEL DIA
+# ============================================================
+
 def carregar_json_avui():
-    """
-    Carrega el JSON del dia actual.
-    """
 
     avui = date.today().isoformat()
 
@@ -90,7 +100,7 @@ def carregar_json_avui():
 
 
 # ============================================================
-# DESCARREGAR GTFS-RT
+# DESCARREGAR REALTIME
 # ============================================================
 
 def descarregar_realtime():
@@ -143,7 +153,9 @@ def extreure_trips_realtime(feed):
         )
 
         trip_id = normalitzar_id(
-            trip.get("tripId")
+            trip.get(
+                "tripId"
+            )
         )
 
         if not trip_id:
@@ -153,7 +165,6 @@ def extreure_trips_realtime(feed):
             "scheduleRelationship"
         )
 
-        # Guardem les dades de totes les parades
         stop_updates = []
 
         for stop_update in trip_update.get(
@@ -162,7 +173,9 @@ def extreure_trips_realtime(feed):
         ):
 
             stop_id = normalitzar_id(
-                stop_update.get("stopId")
+                stop_update.get(
+                    "stopId"
+                )
             )
 
             if not stop_id:
@@ -180,7 +193,8 @@ def extreure_trips_realtime(feed):
 
             timestamp = (
                 arrival.get("time")
-                or departure.get("time")
+                or
+                departure.get("time")
             )
 
             delay_seconds = (
@@ -200,60 +214,112 @@ def extreure_trips_realtime(feed):
                 continue
 
             stop_updates.append({
-                "stop_id": stop_id,
-                "datetime": dt,
-                "minutes": minuts_des_de_mitjanit(dt),
-                "delay_seconds": (
-                    int(delay_seconds)
+
+                "stop_id":
+                    stop_id,
+
+                "datetime":
+                    dt,
+
+                "minutes":
+                    minuts_des_de_mitjanit(
+                        dt
+                    ),
+
+                "delay_seconds":
+                    int(
+                        delay_seconds
+                    )
                     if delay_seconds is not None
                     else 0
-                )
+
             })
 
         resultat.append({
-            "trip_id": trip_id,
-            "relationship": relationship,
-            "stops": stop_updates
+
+            "trip_id":
+                trip_id,
+
+            "relationship":
+                relationship,
+
+            "stops":
+                stop_updates
+
         })
 
     return resultat
 
 
 # ============================================================
-# CREAR ÍNDEX PER STOP
+# INDEXAR REALTIME PER STOP
 # ============================================================
 
-def crear_index_stop(trips_realtime):
+def crear_index_stop(
+    trips_realtime
+):
 
     index = {}
 
     for trip in trips_realtime:
 
-        trip_id = trip["trip_id"]
+        trip_id = trip[
+            "trip_id"
+        ]
 
-        for stop in trip["stops"]:
+        for stop in trip[
+            "stops"
+        ]:
 
-            stop_id = stop["stop_id"]
+            stop_id = stop[
+                "stop_id"
+            ]
 
             if stop_id not in index:
-                index[stop_id] = []
 
-            index[stop_id].append({
-                "trip_id": trip_id,
-                "minutes": stop["minutes"],
-                "datetime": stop["datetime"],
-                "delay_seconds": stop["delay_seconds"],
-                "relationship": trip["relationship"]
+                index[
+                    stop_id
+                ] = []
+
+            index[
+                stop_id
+            ].append({
+
+                "trip_id":
+                    trip_id,
+
+                "minutes":
+                    stop[
+                        "minutes"
+                    ],
+
+                "datetime":
+                    stop[
+                        "datetime"
+                    ],
+
+                "delay_seconds":
+                    stop[
+                        "delay_seconds"
+                    ],
+
+                "relationship":
+                    trip[
+                        "relationship"
+                    ]
+
             })
 
     return index
 
 
 # ============================================================
-# TROBAR HORA TEÒRICA D'UNA PARADA
+# HORA TEÒRICA
 # ============================================================
 
-def hora_teorica_parada(stop):
+def hora_teorica_parada(
+    stop
+):
 
     valor = stop.get(
         "scheduled_arrival"
@@ -269,14 +335,18 @@ def hora_teorica_parada(stop):
         return None
 
     try:
-        return int(valor)
+
+        return int(
+            valor
+        )
 
     except Exception:
+
         return None
 
 
 # ============================================================
-# MATCHING PER ID DIRECTE
+# MATCHING DIRECTE
 # ============================================================
 
 def buscar_matching_directe(
@@ -285,7 +355,9 @@ def buscar_matching_directe(
 ):
 
     train_id = normalitzar_id(
-        train.get("train_id")
+        train.get(
+            "train_id"
+        )
     )
 
     if not train_id:
@@ -297,7 +369,33 @@ def buscar_matching_directe(
 
 
 # ============================================================
-# MATCHING PER PARADA + HORA
+# MATCHING INTEL·LIGENT
+#
+# IMPORTANT:
+#
+# Abans:
+#     màxim 45 minuts
+#
+# Ara:
+#     màxim 10 minuts
+#
+# A més:
+#     comprovem que la diferència entre l'hora realtime
+#     i la teòrica sigui coherent amb el retard declarat.
+#
+# Exemple que NO acceptarem:
+#
+# Teòrica: 16:31
+# Real:    16:14
+# Retard:  +13
+#
+# perquè:
+#
+# 16:14 - 16:31 = -17 minuts
+#
+# però el feed diu +13.
+#
+# Això és inconsistent.
 # ============================================================
 
 def buscar_matching_intelligent(
@@ -306,26 +404,32 @@ def buscar_matching_intelligent(
     used_trip_ids
 ):
 
-    millor = None
-
-    millor_distancia = None
+    candidats_tren = {}
 
     stops = train.get(
         "stops",
         []
     )
 
+    # --------------------------------------------------------
+    # Buscar candidats a partir de totes les parades
+    # --------------------------------------------------------
+
     for static_stop in stops:
 
         stop_id = normalitzar_id(
-            static_stop.get("stop_id")
+            static_stop.get(
+                "stop_id"
+            )
         )
 
         if not stop_id:
             continue
 
-        hora_teorica = hora_teorica_parada(
-            static_stop
+        hora_teorica = (
+            hora_teorica_parada(
+                static_stop
+            )
         )
 
         if hora_teorica is None:
@@ -338,56 +442,202 @@ def buscar_matching_intelligent(
 
         for candidat in candidats:
 
-            trip_id = candidat["trip_id"]
+            trip_id = candidat[
+                "trip_id"
+            ]
 
-            # No reutilitzar un mateix tren realtime
             if trip_id in used_trip_ids:
                 continue
 
-            hora_real = candidat["minutes"]
+            hora_real = candidat[
+                "minutes"
+            ]
 
-            diferencia = abs(
-                hora_real - hora_teorica
+            diferencia = (
+                hora_real
+                - hora_teorica
             )
 
-            if diferencia > MAX_MATCH_MINUTES:
+            # ------------------------------------------------
+            # LIMITACIÓ TEMPORAL
+            # ------------------------------------------------
+
+            if abs(
+                diferencia
+            ) > MAX_MATCH_MINUTES:
+
                 continue
 
-            # Penalització lleugera si el retard declarat
-            # no concorda amb la diferència horària.
             delay_minutes = (
-                candidat["delay_seconds"] / 60
+                candidat[
+                    "delay_seconds"
+                ] / 60
             )
 
+            # ------------------------------------------------
+            # COMPROVAR COHERÈNCIA DEL RETARD
+            #
+            # Si el tren va 17 minuts abans però el feed diu
+            # +13 minuts de retard, no pot ser el mateix tren.
+            # ------------------------------------------------
+
             diferencia_delay = abs(
-                (hora_real - hora_teorica)
+                diferencia
                 - delay_minutes
             )
 
-            puntuacio = (
-                diferencia
-                + diferencia_delay * 0.25
-            )
-
             if (
-                millor is None
-                or puntuacio < millor_distancia
+                diferencia_delay
+                > MAX_DELAY_DIFFERENCE_MINUTES
             ):
 
-                millor = {
-                    "trip_id": trip_id,
-                    "static_stop": static_stop,
-                    "realtime_stop": candidat,
-                    "score": puntuacio
-                }
+                continue
 
-                millor_distancia = puntuacio
+            # ------------------------------------------------
+            # Guardar coincidència
+            # ------------------------------------------------
+
+            if trip_id not in candidats_tren:
+
+                candidats_tren[
+                    trip_id
+                ] = []
+
+            candidats_tren[
+                trip_id
+            ].append({
+
+                "static_stop":
+                    static_stop,
+
+                "realtime_stop":
+                    candidat,
+
+                "diferencia":
+                    diferencia,
+
+                "diferencia_delay":
+                    diferencia_delay
+
+            })
+
+    # --------------------------------------------------------
+    # Si no tenim candidats
+    # --------------------------------------------------------
+
+    if not candidats_tren:
+
+        return None
+
+    # --------------------------------------------------------
+    # Puntuar cada trip realtime
+    #
+    # Donem prioritat als trips que coincideixen amb
+    # diverses parades del tren estàtic.
+    # --------------------------------------------------------
+
+    millor = None
+    millor_puntuacio = None
+
+    for trip_id, coincidencies in (
+        candidats_tren.items()
+    ):
+
+        nombre_coincidencies = len(
+            coincidencies
+        )
+
+        suma_diferencies = sum(
+            abs(
+                c["diferencia"]
+            )
+            for c in coincidencies
+        )
+
+        suma_incoherencia = sum(
+            c[
+                "diferencia_delay"
+            ]
+            for c in coincidencies
+        )
+
+        # Com més coincidències, millor.
+        #
+        # Una puntuació baixa és millor.
+
+        puntuacio = (
+
+            suma_diferencies
+
+            +
+
+            suma_incoherencia * 0.5
+
+            -
+
+            nombre_coincidencies * 8
+
+        )
+
+        if (
+            millor is None
+            or
+            puntuacio
+            < millor_puntuacio
+        ):
+
+            # Utilitzem la millor coincidència
+            # d'aquest trip.
+
+            millor_coincidencia = min(
+                coincidencies,
+                key=lambda c:
+                    (
+                        abs(
+                            c[
+                                "diferencia"
+                            ]
+                        )
+                        +
+                        c[
+                            "diferencia_delay"
+                        ]
+                        * 0.5
+                    )
+            )
+
+            millor = {
+
+                "trip_id":
+                    trip_id,
+
+                "static_stop":
+                    millor_coincidencia[
+                        "static_stop"
+                    ],
+
+                "realtime_stop":
+                    millor_coincidencia[
+                        "realtime_stop"
+                    ],
+
+                "coincidencies":
+                    nombre_coincidencies,
+
+                "score":
+                    puntuacio
+
+            }
+
+            millor_puntuacio = (
+                puntuacio
+            )
 
     return millor
 
 
 # ============================================================
-# APLICAR REALTIME A UNA PARADA
+# APLICAR REALTIME
 # ============================================================
 
 def aplicar_realtime(
@@ -395,40 +645,46 @@ def aplicar_realtime(
     realtime_stop
 ):
 
-    delay_seconds = realtime_stop.get(
-        "delay_seconds",
-        0
+    delay_seconds = (
+        realtime_stop.get(
+            "delay_seconds",
+            0
+        )
     )
 
     delay_minutes = round(
         delay_seconds / 60
     )
 
-    actual_minutes = realtime_stop.get(
-        "minutes"
+    actual_minutes = (
+        realtime_stop.get(
+            "minutes"
+        )
     )
 
-    actual_datetime = realtime_stop.get(
-        "datetime"
+    actual_datetime = (
+        realtime_stop.get(
+            "datetime"
+        )
     )
 
-    static_stop["actual_minutes"] = (
-        actual_minutes
-    )
+    static_stop[
+        "actual_minutes"
+    ] = actual_minutes
 
-    static_stop["delay_minutes"] = (
-        delay_minutes
-    )
+    static_stop[
+        "delay_minutes"
+    ] = delay_minutes
 
     if actual_datetime:
 
-        static_stop["actual_time"] = (
-            actual_datetime.isoformat()
-        )
+        static_stop[
+            "actual_time"
+        ] = actual_datetime.isoformat()
 
 
 # ============================================================
-# ACTUALITZAR UN TREN
+# ACTUALITZAR TREN
 # ============================================================
 
 def actualitzar_train(
@@ -438,12 +694,13 @@ def actualitzar_train(
 
     updated = 0
 
-    realtime_stops = realtime_trip.get(
-        "stops",
-        []
+    realtime_stops = (
+        realtime_trip.get(
+            "stops",
+            []
+        )
     )
 
-    # Índex dels stop realtime
     realtime_by_stop = {}
 
     for stop in realtime_stops:
@@ -458,7 +715,9 @@ def actualitzar_train(
     ):
 
         stop_id = normalitzar_id(
-            static_stop.get("stop_id")
+            static_stop.get(
+                "stop_id"
+            )
         )
 
         realtime_stop = (
@@ -481,10 +740,12 @@ def actualitzar_train(
 
 
 # ============================================================
-# ACTUALITZAR ESTATS DEL TREN
+# ACTUALITZAR ESTAT DEL TREN
 # ============================================================
 
-def actualitzar_estat_train(train):
+def actualitzar_estat_train(
+    train
+):
 
     stops = train.get(
         "stops",
@@ -495,37 +756,53 @@ def actualitzar_estat_train(train):
         return
 
     stops_amb_realtime = [
+
         stop
+
         for stop in stops
-        if stop.get("actual_minutes") is not None
+
+        if stop.get(
+            "actual_minutes"
+        ) is not None
+
     ]
 
     if not stops_amb_realtime:
         return
 
-    # Retard final basat en l'última parada
-    ultima = stops_amb_realtime[-1]
+    ultima = (
+        stops_amb_realtime[-1]
+    )
 
-    if ultima.get("delay_minutes") is not None:
-
-        train["final_delay_minutes"] = (
-            ultima["delay_minutes"]
+    if (
+        ultima.get(
+            "delay_minutes"
         )
+        is not None
+    ):
 
-    # El tren ha començat si tenim alguna parada realtime
-    train["started"] = True
+        train[
+            "final_delay_minutes"
+        ] = ultima[
+            "delay_minutes"
+        ]
 
-    # Si tenim realtime de l'última parada,
-    # considerem que ha arribat.
+    train[
+        "started"
+    ] = True
+
     ultima_parada = stops[-1]
 
     if (
         ultima_parada.get(
             "actual_minutes"
-        ) is not None
+        )
+        is not None
     ):
 
-        train["arrived"] = True
+        train[
+            "arrived"
+        ] = True
 
 
 # ============================================================
@@ -535,19 +812,31 @@ def actualitzar_estat_train(train):
 def main():
 
     print()
-    print("==========================================")
-    print("R15 REALTIME")
+
+    print(
+        "=========================================="
+    )
+
+    print(
+        "R15 REALTIME"
+    )
+
     print(
         "Data:",
         date.today().isoformat()
     )
-    print("==========================================")
+
+    print(
+        "=========================================="
+    )
 
     # --------------------------------------------------------
     # CARREGAR JSON
     # --------------------------------------------------------
 
-    dades, path = carregar_json_avui()
+    dades, path = (
+        carregar_json_avui()
+    )
 
     if dades is None:
         return
@@ -563,7 +852,9 @@ def main():
 
     try:
 
-        feed = descarregar_realtime()
+        feed = (
+            descarregar_realtime()
+        )
 
     except Exception as e:
 
@@ -578,8 +869,10 @@ def main():
     # EXTREURE TRIPS
     # --------------------------------------------------------
 
-    trips_realtime = extreure_trips_realtime(
-        feed
+    trips_realtime = (
+        extreure_trips_realtime(
+            feed
+        )
     )
 
     print(
@@ -587,24 +880,24 @@ def main():
         len(trips_realtime)
     )
 
-    # --------------------------------------------------------
-    # ÍNDEXOS
-    # --------------------------------------------------------
-
     realtime_by_id = {
-        trip["trip_id"]: trip
-        for trip in trips_realtime
+
+        trip["trip_id"]:
+            trip
+
+        for trip
+        in trips_realtime
+
     }
 
-    index_stop = crear_index_stop(
-        trips_realtime
+    index_stop = (
+        crear_index_stop(
+            trips_realtime
+        )
     )
 
-    # Trips realtime ja utilitzats
-    used_trip_ids = set()
-
     # --------------------------------------------------------
-    # TROBAR TRENS R15
+    # FILTRAR R15
     # --------------------------------------------------------
 
     trains = dades.get(
@@ -616,29 +909,34 @@ def main():
 
     for train in trains:
 
-        # collect.py ja genera només R15,
-        # però deixem aquesta comprovació.
         route = normalitzar_id(
-            train.get("route_id")
+            train.get(
+                "route_id"
+            )
         )
 
         train_id = normalitzar_id(
-            train.get("train_id")
+            train.get(
+                "train_id"
+            )
         )
 
         if (
-            "R15" in route
-            or "R15" in train_id
-            or route == ""
+            "R15"
+            in route
+            or
+            "R15"
+            in train_id
+            or
+            route == ""
         ):
 
             r15_trains.append(
                 train
             )
 
-    # Si no podem determinar route_id,
-    # treballem amb tots els trens del fitxer.
     if not r15_trains:
+
         r15_trains = trains
 
     # --------------------------------------------------------
@@ -646,74 +944,121 @@ def main():
     # --------------------------------------------------------
 
     trains_updated = 0
+
     stops_updated = 0
+
     direct_matches = 0
+
     intelligent_matches = 0
+
+    used_trip_ids = set()
+
+    # --------------------------------------------------------
+    # PRIMER: MATCHING DIRECTE
+    # --------------------------------------------------------
 
     for train in r15_trains:
 
         train_id = normalitzar_id(
-            train.get("train_id")
+            train.get(
+                "train_id"
+            )
         )
 
-        # ----------------------------------------------
-        # 1. MATCHING DIRECTE
-        # ----------------------------------------------
-
-        direct = buscar_matching_directe(
-            train,
-            realtime_by_id
+        direct = (
+            buscar_matching_directe(
+                train,
+                realtime_by_id
+            )
         )
 
         if (
             direct is not None
-            and train_id not in used_trip_ids
+            and
+            train_id
+            not in used_trip_ids
         ):
 
-            count = actualitzar_train(
-                train,
-                direct
+            count = (
+                actualitzar_train(
+                    train,
+                    direct
+                )
             )
 
             if count > 0:
 
                 used_trip_ids.add(
-                    direct["trip_id"]
+                    direct[
+                        "trip_id"
+                    ]
                 )
 
                 trains_updated += 1
+
                 direct_matches += 1
+
                 stops_updated += count
 
-                continue
+    # --------------------------------------------------------
+    # SEGON: MATCHING INTEL·LIGENT
+    # --------------------------------------------------------
 
-        # ----------------------------------------------
-        # 2. MATCHING INTELLIGENT
-        # ----------------------------------------------
+    for train in r15_trains:
 
-        intelligent = buscar_matching_intelligent(
-            train,
-            index_stop,
-            used_trip_ids
+        train_id = normalitzar_id(
+            train.get(
+                "train_id"
+            )
+        )
+
+        # Si ja té realtime, no el tornem a buscar.
+
+        if any(
+            stop.get(
+                "actual_minutes"
+            ) is not None
+            for stop in train.get(
+                "stops",
+                []
+            )
+        ):
+
+            continue
+
+        intelligent = (
+            buscar_matching_intelligent(
+                train,
+                index_stop,
+                used_trip_ids
+            )
         )
 
         if intelligent is None:
+
             continue
 
-        realtime_trip_id = intelligent[
-            "trip_id"
-        ]
+        realtime_trip_id = (
+            intelligent[
+                "trip_id"
+            ]
+        )
 
-        realtime_trip = realtime_by_id.get(
-            realtime_trip_id
+        realtime_trip = (
+            realtime_by_id.get(
+                realtime_trip_id
+            )
         )
 
         if realtime_trip is None:
+
             continue
 
-        count = actualitzar_train(
-            train,
-            realtime_trip
+        count = (
+            actualitzar_train(
+                train,
+                realtime_trip
+            )
         )
 
         if count > 0:
@@ -723,8 +1068,28 @@ def main():
             )
 
             trains_updated += 1
+
             intelligent_matches += 1
+
             stops_updated += count
+
+            print(
+                "MATCH:",
+                train_id,
+                "<->",
+                realtime_trip_id,
+                "| coincidències:",
+                intelligent[
+                    "coincidencies"
+                ],
+                "| score:",
+                round(
+                    intelligent[
+                        "score"
+                    ],
+                    2
+                )
+            )
 
     # --------------------------------------------------------
     # ACTUALITZAR ESTATS
@@ -744,13 +1109,13 @@ def main():
         TZ
     )
 
-    dades["realtime_updated_at"] = (
-        ara.isoformat()
-    )
+    dades[
+        "realtime_updated_at"
+    ] = ara.isoformat()
 
-    dades["source_type"] = (
-        "Renfe GTFS-RT"
-    )
+    dades[
+        "source_type"
+    ] = "Renfe GTFS-RT"
 
     # --------------------------------------------------------
     # GUARDAR
@@ -774,8 +1139,19 @@ def main():
     # --------------------------------------------------------
 
     print()
-    print("==========================================")
-    print("RESULTAT REALTIME")
+
+    print(
+        "=========================================="
+    )
+
+    print(
+        "RESULTAT REALTIME"
+    )
+
+    print(
+        "=========================================="
+    )
+
     print(
         "Trips GTFS-RT:",
         len(trips_realtime)
@@ -800,7 +1176,8 @@ def main():
         "Trens sense realtime:",
         max(
             0,
-            len(r15_trains) - trains_updated
+            len(r15_trains)
+            - trains_updated
         )
     )
 
@@ -811,7 +1188,9 @@ def main():
 
     print(
         "Trips realtime utilitzats:",
-        len(used_trip_ids)
+        len(
+            used_trip_ids
+        )
     )
 
     print(
@@ -819,12 +1198,11 @@ def main():
         path
     )
 
-    print("==========================================")
+    print(
+        "=========================================="
+    )
 
-
-# ============================================================
-# EXECUCIÓ
-# ============================================================
 
 if __name__ == "__main__":
+
     main()
