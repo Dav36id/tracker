@@ -1474,7 +1474,7 @@
       "arrival": "2026-10-03T17:03:00",
       "started": true,
       "arrived": false,
-      "final_delay_minutes": 5,
+      "final_delay_minutes": 11,
       "stops": [
         {
           "station": "Barcelona Estació de França",
@@ -1543,7 +1543,9 @@
           "stop_id": "71401",
           "scheduled_arrival": 1012,
           "scheduled_departure": 1012,
-          "actual_minutes": null
+          "actual_minutes": 1022,
+          "delay_minutes": 11,
+          "actual_time": "2026-10-03T17:02:30+02:00"
         },
         {
           "station": "Reus",
@@ -1563,7 +1565,7 @@
       "arrival": "2026-10-03T19:18:00",
       "started": true,
       "arrived": false,
-      "final_delay_minutes": -1,
+      "final_delay_minutes": 8,
       "stops": [
         {
           "station": "Barcelona Estació de França",
@@ -1607,7 +1609,9 @@
           "stop_id": "71503",
           "scheduled_arrival": 1018,
           "scheduled_departure": 1019,
-          "actual_minutes": null
+          "actual_minutes": 1025,
+          "delay_minutes": 8,
+          "actual_time": "2026-10-03T17:05:51+02:00"
         },
         {
           "station": "Altafulla-Tamarit",
@@ -1683,7 +1687,7 @@
       "arrival": "2026-10-03T18:24:00",
       "started": true,
       "arrived": false,
-      "final_delay_minutes": 0,
+      "final_delay_minutes": 1,
       "stops": [
         {
           "station": "Reus",
@@ -1713,7 +1717,9 @@
           "stop_id": "71502",
           "scheduled_arrival": 1025,
           "scheduled_departure": 1025,
-          "actual_minutes": null
+          "actual_minutes": 1025,
+          "delay_minutes": 1,
+          "actual_time": "2026-10-03T17:05:56+02:00"
         },
         {
           "station": "Torredembarra",
@@ -2688,5 +2694,5 @@
       ]
     }
   ],
-  "realtime_updated_at": "2026-10-03T16:33:55.631506+02:00"
+  "realtime_updated_at": "2026-10-03T16:55:29.040377+02:00"
 }
