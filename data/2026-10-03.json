@@ -1,7 +1,7 @@
 {
   "source": "Renfe Data",
   "source_type": "GTFS + GTFS-RT",
-  "generated_at": "2026-10-03T12:12:00.828151+00:00",
+  "generated_at": "2026-10-03T12:16:29.937963+00:00",
   "date": "2026-10-03",
   "line": "R15",
   "trains": [
@@ -2666,5 +2666,5 @@
       ]
     }
   ],
-  "realtime_updated_at": "2026-10-03T14:12:01.837317+02:00"
+  "realtime_updated_at": "2026-10-03T14:16:30.853274+02:00"
 }
