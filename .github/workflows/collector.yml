@@ -13,29 +13,64 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # ======================================================
+      # DESCARREGAR REPOSITORI
+      # ======================================================
+
       - name: Descarregar repositori
         uses: actions/checkout@v4
+
+
+      # ======================================================
+      # CONFIGURAR PYTHON
+      # ======================================================
 
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
+
+      # ======================================================
+      # INSTAL·LAR DEPENDÈNCIES
+      # ======================================================
+
       - name: Instal·lar dependències
         run: |
           pip install requests
+
+
+      # ======================================================
+      # GENERAR HORARIS DEL DIA
+      # ======================================================
 
       - name: Generar horaris del dia
         run: |
           python collector/collect.py
 
+
+      # ======================================================
+      # ACTUALITZAR TEMPS REAL
+      # ======================================================
+
       - name: Actualitzar temps real
         run: |
           python collector/realtime.py
 
-      - name: Provar API Mobilitat Penedès
+
+      # ======================================================
+      # PROVAR TOTS ELS FEEDS OFICIALS DE RENFE
+      # ======================================================
+
+      - name: Investigar feeds GTFS-RT Renfe
         run: |
-          python collector/test_realtime.py
+          python collector/probe_renfe.py
+
+
+      # ======================================================
+      # GUARDAR DADES AL REPOSITORI
+      # ======================================================
 
       - name: Guardar dades al repositori
         run: |
