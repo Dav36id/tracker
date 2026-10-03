@@ -20,28 +20,30 @@ HEADERS = {
     "User-Agent": "R15-Tracker/1.0"
 }
 
-# Diferència màxima entre hora teòrica i realtime
-# per considerar una coincidència.
-MAX_MATCH_MINUTES = 10
+# Diferència màxima entre l'hora teòrica calculada
+# a partir del realtime i l'hora teòrica del tren.
+MAX_SCHEDULE_MATCH_MINUTES = 3
 
-# Diferència màxima permesa entre:
-#
-#   hora realtime - hora teòrica
-#
-# i
-#
-#   retard declarat pel feed
-#
+# Si dos trens estan massa a prop, no acceptem
+# automàticament el matching.
+MIN_CANDIDATE_SEPARATION_MINUTES = 2
+
+# Diferència màxima entre el retard declarat pel feed
+# i el retard calculat.
 MAX_DELAY_DIFFERENCE_MINUTES = 5
-
-# Nombre MÍNIM de parades coincidents necessàries
-# per acceptar un matching intel·ligent.
-MIN_MATCHING_STOPS = 2
 
 
 # ============================================================
 # UTILITATS
 # ============================================================
+
+def normalitzar_id(valor):
+
+    if valor is None:
+        return ""
+
+    return str(valor).strip()
+
 
 def convertir_timestamp(timestamp):
 
@@ -65,28 +67,39 @@ def minuts_des_de_mitjanit(dt):
     )
 
 
-def normalitzar_id(valor):
-
-    if valor is None:
-        return ""
-
-    return str(valor).strip()
-
-
 def format_minutes(minutes):
 
     if minutes is None:
         return "--:--"
 
-    minutes = int(minutes)
+    minutes = int(round(minutes))
 
-    # Per si hi ha horaris després de mitjanit
-    minutes = minutes % (24 * 60)
+    # Admetem horaris > 24:00
+    # però per visualitzar-los fem servir el rellotge.
+    display = minutes % (24 * 60)
 
-    hores = minutes // 60
-    minuts = minutes % 60
+    hores = display // 60
+    minuts = display % 60
 
     return f"{hores:02d}:{minuts:02d}"
+
+
+def diferencia_circular_minutes(a, b):
+
+    """
+    Diferència entre dues hores en minuts.
+
+    Permet comparar també horaris propers a mitjanit.
+    """
+
+    d = abs(
+        int(a) - int(b)
+    )
+
+    return min(
+        d,
+        24 * 60 - d
+    )
 
 
 # ============================================================
@@ -120,6 +133,69 @@ def carregar_json_avui():
         dades = json.load(f)
 
     return dades, path
+
+
+# ============================================================
+# NETEJAR REALTIME ANTIC
+# ============================================================
+
+def netejar_realtime(dades):
+
+    """
+    Elimina les dades realtime de l'execució anterior.
+
+    Això és important perquè collect.py pot conservar
+    dades realtime vàlides del run anterior.
+
+    Cada execució de realtime.py començarà des de zero
+    i només escriurà la informació disponible en el feed
+    actual.
+    """
+
+    trains = dades.get(
+        "trains",
+        []
+    )
+
+    camps_stop = [
+        "actual_minutes",
+        "delay_minutes",
+        "actual_time"
+    ]
+
+    camps_train = [
+        "final_delay_minutes",
+        "started",
+        "arrived"
+    ]
+
+    stops_netejades = 0
+
+    for train in trains:
+
+        for stop in train.get(
+            "stops",
+            []
+        ):
+
+            for camp in camps_stop:
+
+                if camp in stop:
+
+                    del stop[camp]
+
+                    stops_netejades += 1
+
+        for camp in camps_train:
+
+            if camp in train:
+
+                del train[camp]
+
+    print(
+        "Dades realtime antigues eliminades:",
+        stops_netejades
+    )
 
 
 # ============================================================
@@ -187,10 +263,6 @@ def extreure_trips_realtime(feed):
         relationship = trip.get(
             "scheduleRelationship"
         )
-
-        # ----------------------------------------------------
-        # Informació addicional del TripDescriptor
-        # ----------------------------------------------------
 
         route_id = normalitzar_id(
             trip.get(
@@ -262,6 +334,12 @@ def extreure_trips_realtime(feed):
             if dt is None:
                 continue
 
+            delay_seconds = (
+                int(delay_seconds)
+                if delay_seconds is not None
+                else 0
+            )
+
             stop_updates.append({
 
                 "stop_id":
@@ -276,11 +354,7 @@ def extreure_trips_realtime(feed):
                     ),
 
                 "delay_seconds":
-                    int(
-                        delay_seconds
-                    )
-                    if delay_seconds is not None
-                    else 0
+                    delay_seconds
 
             })
 
@@ -313,94 +387,10 @@ def extreure_trips_realtime(feed):
 
 
 # ============================================================
-# INDEXAR REALTIME PER STOP
+# HORA TEÒRICA D'UNA PARADA
 # ============================================================
 
-def crear_index_stop(
-    trips_realtime
-):
-
-    index = {}
-
-    for trip in trips_realtime:
-
-        trip_id = trip[
-            "trip_id"
-        ]
-
-        for stop in trip[
-            "stops"
-        ]:
-
-            stop_id = stop[
-                "stop_id"
-            ]
-
-            if stop_id not in index:
-
-                index[
-                    stop_id
-                ] = []
-
-            index[
-                stop_id
-            ].append({
-
-                "trip_id":
-                    trip_id,
-
-                "minutes":
-                    stop[
-                        "minutes"
-                    ],
-
-                "datetime":
-                    stop[
-                        "datetime"
-                    ],
-
-                "delay_seconds":
-                    stop[
-                        "delay_seconds"
-                    ],
-
-                "relationship":
-                    trip[
-                        "relationship"
-                    ],
-
-                "route_id":
-                    trip[
-                        "route_id"
-                    ],
-
-                "direction_id":
-                    trip[
-                        "direction_id"
-                    ],
-
-                "start_time":
-                    trip[
-                        "start_time"
-                    ],
-
-                "start_date":
-                    trip[
-                        "start_date"
-                    ]
-
-            })
-
-    return index
-
-
-# ============================================================
-# HORA TEÒRICA
-# ============================================================
-
-def hora_teorica_parada(
-    stop
-):
+def hora_teorica_parada(stop):
 
     valor = stop.get(
         "scheduled_arrival"
@@ -427,7 +417,7 @@ def hora_teorica_parada(
 
 
 # ============================================================
-# MATCHING DIRECTE
+# MATCHING DIRECTE PER ID
 # ============================================================
 
 def buscar_matching_directe(
@@ -450,435 +440,473 @@ def buscar_matching_directe(
 
 
 # ============================================================
-# MATCHING INTEL·LIGENT
-#
-# REQUISIT IMPORTANT:
-#
-# El mateix trip realtime ha de coincidir amb
-# COM A MÍNIM 2 PARADES del tren estàtic.
-#
-# Això evita falsos positius provocats per una sola
-# parada amb una hora semblant.
+# CONSTRUIR ÍNDEX DE TOTES LES PARADES ESTÀTIQUES
 # ============================================================
 
-def buscar_matching_intelligent(
-    train,
-    index_stop,
+def construir_index_horaris(
+    r15_trains
+):
+
+    """
+    Índex:
+
+        hora_teorica
+            ->
+        candidats (tren + parada)
+
+    No depenem del stop_id realtime.
+
+    """
+
+    index = {}
+
+    for train in r15_trains:
+
+        train_id = normalitzar_id(
+            train.get(
+                "train_id"
+            )
+        )
+
+        for static_stop in train.get(
+            "stops",
+            []
+        ):
+
+            theoretical = (
+                hora_teorica_parada(
+                    static_stop
+                )
+            )
+
+            if theoretical is None:
+                continue
+
+            # Guardem també petites variacions.
+            #
+            # Exemple:
+            # 16:42
+            # 16:43
+            # 16:41
+
+            for offset in (
+                -2,
+                -1,
+                0,
+                1,
+                2
+            ):
+
+                key = (
+                    theoretical
+                    + offset
+                )
+
+                if key not in index:
+
+                    index[key] = []
+
+                index[key].append({
+
+                    "train":
+                        train,
+
+                    "train_id":
+                        train_id,
+
+                    "static_stop":
+                        static_stop,
+
+                    "theoretical":
+                        theoretical
+
+                })
+
+    return index
+
+
+# ============================================================
+# MATCHING PER HORA
+# ============================================================
+
+def buscar_matching_per_hora(
+    realtime_trip,
+    r15_trains,
+    horaris_index,
     used_trip_ids
 ):
 
-    train_id = normalitzar_id(
-        train.get(
-            "train_id"
-        )
-    )
+    trip_id = realtime_trip[
+        "trip_id"
+    ]
 
-    candidats_tren = {}
+    if trip_id in used_trip_ids:
 
-    stops = train.get(
+        return None
+
+    candidats = []
+
+    # --------------------------------------------------------
+    # Cada TripUpdate pot tenir una o diverses parades.
+    # --------------------------------------------------------
+
+    for realtime_stop in realtime_trip.get(
         "stops",
         []
+    ):
+
+        real_minutes = realtime_stop.get(
+            "minutes"
+        )
+
+        if real_minutes is None:
+            continue
+
+        delay_minutes = (
+            realtime_stop.get(
+                "delay_seconds",
+                0
+            )
+            / 60
+        )
+
+        # ----------------------------------------------------
+        # Calcul de l'hora teòrica implícita
+        #
+        # Exemple:
+        #
+        # real: 17:05
+        # retard: +5
+        #
+        # teòrica implícita: 17:00
+        # ----------------------------------------------------
+
+        theoretical_implied = (
+            real_minutes
+            - delay_minutes
+        )
+
+        # ----------------------------------------------------
+        # Buscar candidats propers
+        # ----------------------------------------------------
+
+        rounded_theoretical = round(
+            theoretical_implied
+        )
+
+        for key in range(
+            rounded_theoretical - 3,
+            rounded_theoretical + 4
+        ):
+
+            possibles = horaris_index.get(
+                key,
+                []
+            )
+
+            for possible in possibles:
+
+                train = possible[
+                    "train"
+                ]
+
+                train_id = possible[
+                    "train_id"
+                ]
+
+                static_stop = possible[
+                    "static_stop"
+                ]
+
+                theoretical = possible[
+                    "theoretical"
+                ]
+
+                # No reutilitzar el mateix realtime
+                # per a dos trens.
+                if trip_id in used_trip_ids:
+                    continue
+
+                # ------------------------------------------------
+                # Diferència horària
+                # ------------------------------------------------
+
+                schedule_difference = (
+                    theoretical_implied
+                    - theoretical
+                )
+
+                if abs(
+                    schedule_difference
+                ) > MAX_SCHEDULE_MATCH_MINUTES:
+
+                    continue
+
+                # ------------------------------------------------
+                # Coherència del retard
+                #
+                # Calculat:
+                #
+                # real - teòrica
+                #
+                # vs
+                #
+                # retard del feed
+                # ------------------------------------------------
+
+                calculated_delay = (
+                    real_minutes
+                    - theoretical
+                )
+
+                delay_difference = abs(
+                    calculated_delay
+                    - delay_minutes
+                )
+
+                if (
+                    delay_difference
+                    > MAX_DELAY_DIFFERENCE_MINUTES
+                ):
+
+                    continue
+
+                candidats.append({
+
+                    "trip_id":
+                        trip_id,
+
+                    "realtime_stop":
+                        realtime_stop,
+
+                    "train":
+                        train,
+
+                    "train_id":
+                        train_id,
+
+                    "static_stop":
+                        static_stop,
+
+                    "theoretical":
+                        theoretical,
+
+                    "real_minutes":
+                        real_minutes,
+
+                    "delay_minutes":
+                        delay_minutes,
+
+                    "schedule_difference":
+                        schedule_difference,
+
+                    "delay_difference":
+                        delay_difference
+
+                })
+
+    # --------------------------------------------------------
+    # Si no tenim candidats
+    # --------------------------------------------------------
+
+    if not candidats:
+
+        return None
+
+    # --------------------------------------------------------
+    # Ordenar candidats
+    #
+    # Prioritat:
+    #
+    # 1. menor diferència horària
+    # 2. menor incoherència de retard
+    # --------------------------------------------------------
+
+    candidats.sort(
+        key=lambda c: (
+            abs(
+                c[
+                    "schedule_difference"
+                ]
+            ),
+            c[
+                "delay_difference"
+            ]
+        )
     )
 
     # --------------------------------------------------------
-    # Buscar candidats
+    # Eliminar duplicats del mateix tren
+    #
+    # Un tren pot tenir diverses parades candidates.
+    # Ens quedem amb la millor.
     # --------------------------------------------------------
 
-    for static_stop in stops:
+    millors_per_tren = {}
 
-        stop_id = normalitzar_id(
-            static_stop.get(
-                "stop_id"
-            )
-        )
+    for candidat in candidats:
 
-        if not stop_id:
-            continue
+        train_id = candidat[
+            "train_id"
+        ]
 
-        hora_teorica = (
-            hora_teorica_parada(
-                static_stop
-            )
-        )
-
-        if hora_teorica is None:
-            continue
-
-        candidats = index_stop.get(
-            stop_id,
-            []
-        )
-
-        for candidat in candidats:
-
-            trip_id = candidat[
-                "trip_id"
-            ]
-
-            if trip_id in used_trip_ids:
-                continue
-
-            hora_real = candidat[
-                "minutes"
-            ]
-
-            diferencia = (
-                hora_real
-                - hora_teorica
-            )
-
-            # ------------------------------------------------
-            # LIMITACIÓ TEMPORAL
-            # ------------------------------------------------
-
-            if abs(
-                diferencia
-            ) > MAX_MATCH_MINUTES:
-
-                continue
-
-            delay_minutes = (
-                candidat[
-                    "delay_seconds"
-                ] / 60
-            )
-
-            # ------------------------------------------------
-            # COHERÈNCIA DEL RETARD
-            # ------------------------------------------------
-
-            diferencia_delay = abs(
-                diferencia
-                - delay_minutes
-            )
-
-            if (
-                diferencia_delay
-                > MAX_DELAY_DIFFERENCE_MINUTES
-            ):
-
-                continue
-
-            # ------------------------------------------------
-            # Guardar coincidència
-            # ------------------------------------------------
-
-            if trip_id not in candidats_tren:
-
-                candidats_tren[
-                    trip_id
-                ] = []
-
-            candidats_tren[
-                trip_id
-            ].append({
-
-                "static_stop":
-                    static_stop,
-
-                "realtime_stop":
-                    candidat,
-
-                "diferencia":
-                    diferencia,
-
-                "diferencia_delay":
-                    diferencia_delay
-
-            })
-
-    # --------------------------------------------------------
-    # LOG DE CANDIDATS
-    # --------------------------------------------------------
-
-    if candidats_tren:
-
-        print()
-        print(
-            "------------------------------------------"
-        )
-
-        print(
-            "CANDIDATS PER AL TREN:",
+        actual = millors_per_tren.get(
             train_id
         )
 
-        print(
-            "------------------------------------------"
-        )
-
-        for trip_id, coincidencies in (
-            candidats_tren.items()
-        ):
-
-            print(
-                "  RT:",
-                trip_id
-            )
-
-            print(
-                "     Coincidències:",
-                len(coincidencies)
-            )
-
-            for coincidencia in coincidencies:
-
-                static_stop = (
-                    coincidencia[
-                        "static_stop"
-                    ]
-                )
-
-                realtime_stop = (
-                    coincidencia[
-                        "realtime_stop"
-                    ]
-                )
-
-                stop_id = normalitzar_id(
-                    static_stop.get(
-                        "stop_id"
-                    )
-                )
-
-                theoretical = (
-                    hora_teorica_parada(
-                        static_stop
-                    )
-                )
-
-                real = realtime_stop.get(
-                    "minutes"
-                )
-
-                delay = (
-                    realtime_stop.get(
-                        "delay_seconds",
-                        0
-                    )
-                    / 60
-                )
-
-                diferencia = (
-                    coincidencia[
-                        "diferencia"
-                    ]
-                )
-
-                print(
-                    "     - stop:",
-                    stop_id,
-                    "| teòrica:",
-                    format_minutes(
-                        theoretical
-                    ),
-                    "| real:",
-                    format_minutes(
-                        real
-                    ),
-                    "| diferència:",
-                    f"{diferencia:+.1f} min",
-                    "| feed:",
-                    f"{delay:+.1f} min"
-                )
-
-    # --------------------------------------------------------
-    # Si no hi ha candidats
-    # --------------------------------------------------------
-
-    if not candidats_tren:
-
-        return None
-
-    # --------------------------------------------------------
-    # ELIMINAR CANDIDATS AMB NOMÉS 1 COINCIDÈNCIA
-    # --------------------------------------------------------
-
-    candidats_valids = {}
-
-    for trip_id, coincidencies in (
-        candidats_tren.items()
-    ):
-
-        nombre_coincidencies = len(
-            coincidencies
-        )
-
         if (
-            nombre_coincidencies
-            < MIN_MATCHING_STOPS
-        ):
-
-            print(
-                "  DESCARTAT:",
-                trip_id,
-                "| només",
-                nombre_coincidencies,
-                "coincidència/es"
-            )
-
-            continue
-
-        candidats_valids[
-            trip_id
-        ] = coincidencies
-
-    # --------------------------------------------------------
-    # Si cap candidat té 2 o més parades
-    # --------------------------------------------------------
-
-    if not candidats_valids:
-
-        print(
-            "  Cap candidat té",
-            MIN_MATCHING_STOPS,
-            "coincidències."
-        )
-
-        return None
-
-    # --------------------------------------------------------
-    # PUNTUAR CANDIDATS
-    # --------------------------------------------------------
-
-    millor = None
-    millor_puntuacio = None
-
-    for trip_id, coincidencies in (
-        candidats_valids.items()
-    ):
-
-        nombre_coincidencies = len(
-            coincidencies
-        )
-
-        suma_diferencies = sum(
-            abs(
-                c["diferencia"]
-            )
-            for c in coincidencies
-        )
-
-        suma_incoherencia = sum(
-            c[
-                "diferencia_delay"
-            ]
-            for c in coincidencies
-        )
-
-        # Com més coincidències millor.
-        #
-        # Com menys diferència millor.
-        #
-        # Com menys incoherència millor.
-
-        puntuacio = (
-
-            suma_diferencies
-
-            +
-
-            suma_incoherencia * 0.5
-
-            -
-
-            nombre_coincidencies * 8
-
-        )
-
-        print(
-            "  VALID:",
-            trip_id,
-            "| coincidències:",
-            nombre_coincidencies,
-            "| score:",
-            round(
-                puntuacio,
-                2
-            )
-        )
-
-        if (
-            millor is None
+            actual is None
             or
-            puntuacio
-            < millor_puntuacio
+            (
+                abs(
+                    candidat[
+                        "schedule_difference"
+                    ]
+                )
+                <
+                abs(
+                    actual[
+                        "schedule_difference"
+                    ]
+                )
+            )
         ):
 
-            millor_coincidencia = min(
-                coincidencies,
-                key=lambda c:
-                    (
-                        abs(
-                            c[
-                                "diferencia"
-                            ]
-                        )
-                        +
-                        c[
-                            "diferencia_delay"
-                        ]
-                        * 0.5
-                    )
-            )
+            millors_per_tren[
+                train_id
+            ] = candidat
 
-            millor = {
+    candidats_unics = list(
+        millors_per_tren.values()
+    )
 
-                "trip_id":
-                    trip_id,
-
-                "static_stop":
-                    millor_coincidencia[
-                        "static_stop"
-                    ],
-
-                "realtime_stop":
-                    millor_coincidencia[
-                        "realtime_stop"
-                    ],
-
-                "coincidencies":
-                    nombre_coincidencies,
-
-                "score":
-                    puntuacio
-
-            }
-
-            millor_puntuacio = (
-                puntuacio
-            )
+    candidats_unics.sort(
+        key=lambda c: (
+            abs(
+                c[
+                    "schedule_difference"
+                ]
+            ),
+            c[
+                "delay_difference"
+            ]
+        )
+    )
 
     # --------------------------------------------------------
-    # RESULTAT
+    # LOG
     # --------------------------------------------------------
 
-    if millor:
+    print()
+
+    print(
+        "CANDIDATS PER RT:",
+        trip_id
+    )
+
+    for candidat in candidatos_unics[:10]:
 
         print(
-            "  >>> MILLOR CANDIDAT:",
-            millor[
-                "trip_id"
+            "  -",
+            candidat[
+                "train_id"
             ],
-            "|",
-            "coincidències:",
+            "| teòrica:",
+            format_minutes(
+                candidat[
+                    "theoretical"
+                ]
+            ),
+            "| RT:",
+            format_minutes(
+                candidat[
+                    "real_minutes"
+                ]
+            ),
+            "| retard feed:",
+            f"{candidat['delay_minutes']:+.1f}",
+            "| diferència:",
+            f"{candidat['schedule_difference']:+.1f}"
+        )
+
+    # --------------------------------------------------------
+    # Si només tenim un candidat
+    # --------------------------------------------------------
+
+    millor = candidats_unics[0]
+
+    if len(candidats_unics) == 1:
+
+        print(
+            "  >>> CANDIDAT ÚNIC:",
             millor[
-                "coincidencies"
-            ],
-            "| score:",
-            round(
+                "train_id"
+            ]
+        )
+
+        return millor
+
+    # --------------------------------------------------------
+    # Comparar primer i segon
+    #
+    # Si estan massa a prop, no decidim.
+    # --------------------------------------------------------
+
+    segon = candidats_unics[1]
+
+    distancia = abs(
+        (
+            abs(
+                segon[
+                    "schedule_difference"
+                ]
+            )
+            -
+            abs(
                 millor[
-                    "score"
-                ],
+                    "schedule_difference"
+                ]
+            )
+        )
+    )
+
+    if (
+        distancia
+        < MIN_CANDIDATE_SEPARATION_MINUTES
+    ):
+
+        print(
+            "  !!! AMBIGU:",
+            trip_id,
+            "| millors:",
+            millor[
+                "train_id"
+            ],
+            "i",
+            segon[
+                "train_id"
+            ],
+            "| separació score:",
+            round(
+                distancia,
                 2
             )
         )
+
+        return None
+
+    print(
+        "  >>> MILLOR CANDIDAT:",
+        millor[
+            "train_id"
+        ]
+    )
 
     return millor
 
 
 # ============================================================
-# APLICAR REALTIME
+# APLICAR REALTIME A UNA PARADA
 # ============================================================
 
 def aplicar_realtime(
@@ -921,11 +949,13 @@ def aplicar_realtime(
 
         static_stop[
             "actual_time"
-        ] = actual_datetime.isoformat()
+        ] = (
+            actual_datetime.isoformat()
+        )
 
 
 # ============================================================
-# ACTUALITZAR TREN
+# APLICAR REALTIME A UN TREN
 # ============================================================
 
 def actualitzar_train(
@@ -942,13 +972,25 @@ def actualitzar_train(
         )
     )
 
+    # --------------------------------------------------------
+    # Si tenim stop_id coincident, el fem servir.
+    # --------------------------------------------------------
+
     realtime_by_stop = {}
 
     for stop in realtime_stops:
 
-        realtime_by_stop[
-            stop["stop_id"]
-        ] = stop
+        stop_id = normalitzar_id(
+            stop.get(
+                "stop_id"
+            )
+        )
+
+        if stop_id:
+
+            realtime_by_stop[
+                stop_id
+            ] = stop
 
     for static_stop in train.get(
         "stops",
@@ -981,6 +1023,34 @@ def actualitzar_train(
 
 
 # ============================================================
+# APLICAR UNA ÚNICA PARADA DETECTADA
+# ============================================================
+
+def aplicar_matching_individual(
+    candidat
+):
+
+    train = candidat[
+        "train"
+    ]
+
+    static_stop = candidat[
+        "static_stop"
+    ]
+
+    realtime_stop = candidat[
+        "realtime_stop"
+    ]
+
+    aplicar_realtime(
+        static_stop,
+        realtime_stop
+    )
+
+    return 1
+
+
+# ============================================================
 # ACTUALITZAR ESTAT DEL TREN
 # ============================================================
 
@@ -1009,7 +1079,19 @@ def actualitzar_estat_train(
     ]
 
     if not stops_amb_realtime:
+
         return
+
+    # Ordenar cronològicament les parades
+    # amb realtime.
+
+    stops_amb_realtime.sort(
+        key=lambda stop:
+            stop.get(
+                "actual_minutes",
+                -1
+            )
+    )
 
     ultima = (
         stops_amb_realtime[-1]
@@ -1031,6 +1113,9 @@ def actualitzar_estat_train(
     train[
         "started"
     ] = True
+
+    # Només considerem arribat si l'última
+    # parada física del tren té realtime.
 
     ultima_parada = stops[-1]
 
@@ -1080,11 +1165,20 @@ def main():
     )
 
     if dades is None:
+
         return
 
     print(
         "Carregant:",
         path
+    )
+
+    # --------------------------------------------------------
+    # NETEJAR REALTIME ANTERIOR
+    # --------------------------------------------------------
+
+    netejar_realtime(
+        dades
     )
 
     # --------------------------------------------------------
@@ -1104,10 +1198,17 @@ def main():
             repr(e)
         )
 
+        # Guardem les dades netes?
+        #
+        # NO.
+        #
+        # Si Renfe falla, no destruïm les dades
+        # del fitxer actual.
+
         return
 
     # --------------------------------------------------------
-    # EXTREURE TRIPS
+    # EXTREURE TRIPS REALTIME
     # --------------------------------------------------------
 
     trips_realtime = (
@@ -1130,12 +1231,6 @@ def main():
         in trips_realtime
 
     }
-
-    index_stop = (
-        crear_index_stop(
-            trips_realtime
-        )
-    )
 
     # --------------------------------------------------------
     # FILTRAR R15
@@ -1186,7 +1281,17 @@ def main():
     )
 
     # --------------------------------------------------------
-    # MATCHING
+    # ÍNDEX HORARIS
+    # --------------------------------------------------------
+
+    horaris_index = (
+        construir_index_horaris(
+            r15_trains
+        )
+    )
+
+    # --------------------------------------------------------
+    # VARIABLES
     # --------------------------------------------------------
 
     trains_updated = 0
@@ -1199,17 +1304,20 @@ def main():
 
     used_trip_ids = set()
 
-    # --------------------------------------------------------
-    # PRIMER: MATCHING DIRECTE
-    # --------------------------------------------------------
+    used_train_ids = set()
+
+    # ========================================================
+    # 1. MATCHING DIRECTE
+    # ========================================================
 
     print()
+
     print(
         "=========================================="
     )
 
     print(
-        "MATCHING DIRECTE"
+        "1. MATCHING DIRECTE"
     )
 
     print(
@@ -1231,172 +1339,209 @@ def main():
             )
         )
 
-        if (
-            direct is not None
-            and
-            train_id
-            not in used_trip_ids
-        ):
-
-            count = (
-                actualitzar_train(
-                    train,
-                    direct
-                )
-            )
-
-            if count > 0:
-
-                used_trip_ids.add(
-                    direct[
-                        "trip_id"
-                    ]
-                )
-
-                trains_updated += 1
-
-                direct_matches += 1
-
-                stops_updated += count
-
-                print(
-                    "DIRECTE:",
-                    train_id,
-                    "<->",
-                    direct[
-                        "trip_id"
-                    ],
-                    "| parades:",
-                    count
-                )
-
-    # --------------------------------------------------------
-    # SEGON: MATCHING INTEL·LIGENT
-    # --------------------------------------------------------
-
-    print()
-    print(
-        "=========================================="
-    )
-
-    print(
-        "MATCHING INTEL·LIGENT"
-    )
-
-    print(
-        "Mínim de coincidències:",
-        MIN_MATCHING_STOPS
-    )
-
-    print(
-        "=========================================="
-    )
-
-    for train in r15_trains:
-
-        train_id = normalitzar_id(
-            train.get(
-                "train_id"
-            )
-        )
-
-        # ----------------------------------------------------
-        # Si ja té realtime, no el tornem a buscar.
-        # ----------------------------------------------------
-
-        if any(
-            stop.get(
-                "actual_minutes"
-            ) is not None
-            for stop in train.get(
-                "stops",
-                []
-            )
-        ):
+        if direct is None:
 
             continue
 
-        intelligent = (
-            buscar_matching_intelligent(
-                train,
-                index_stop,
-                used_trip_ids
-            )
-        )
-
-        if intelligent is None:
-
-            continue
-
-        realtime_trip_id = (
-            intelligent[
-                "trip_id"
-            ]
-        )
-
-        realtime_trip = (
-            realtime_by_id.get(
-                realtime_trip_id
-            )
-        )
-
-        if realtime_trip is None:
+        if direct.get(
+            "trip_id"
+        ) in used_trip_ids:
 
             continue
 
         count = (
             actualitzar_train(
                 train,
-                realtime_trip
+                direct
             )
         )
 
         if count > 0:
 
             used_trip_ids.add(
-                realtime_trip_id
+                direct[
+                    "trip_id"
+                ]
+            )
+
+            used_train_ids.add(
+                train_id
             )
 
             trains_updated += 1
 
-            intelligent_matches += 1
+            direct_matches += 1
 
             stops_updated += count
 
-            print()
-
             print(
-                "MATCH INTEL·LIGENT ACCEPTAT:",
+                "DIRECTE:",
                 train_id,
                 "<->",
-                realtime_trip_id
-            )
-
-            print(
-                "  Coincidències:",
-                intelligent[
-                    "coincidencies"
-                ]
-            )
-
-            print(
-                "  Score:",
-                round(
-                    intelligent[
-                        "score"
-                    ],
-                    2
-                )
-            )
-
-            print(
-                "  Parades actualitzades:",
+                direct[
+                    "trip_id"
+                ],
+                "| parades:",
                 count
             )
 
+    # ========================================================
+    # 2. MATCHING PER HORA
+    # ========================================================
+
+    print()
+
+    print(
+        "=========================================="
+    )
+
+    print(
+        "2. MATCHING PER HORA"
+    )
+
+    print(
+        "=========================================="
+    )
+
     # --------------------------------------------------------
-    # ACTUALITZAR ESTATS
+    # IMPORTANT:
+    #
+    # Primer processem els trips realtime que tenen
+    # una hora i retard vàlids.
     # --------------------------------------------------------
+
+    candidats_processats = 0
+
+    for realtime_trip in trips_realtime:
+
+        trip_id = realtime_trip[
+            "trip_id"
+        ]
+
+        if trip_id in used_trip_ids:
+
+            continue
+
+        if not realtime_trip.get(
+            "stops"
+        ):
+
+            continue
+
+        candidat = (
+            buscar_matching_per_hora(
+                realtime_trip,
+                r15_trains,
+                horaris_index,
+                used_trip_ids
+            )
+        )
+
+        if candidat is None:
+
+            continue
+
+        train = candidat[
+            "train"
+        ]
+
+        train_id = candidat[
+            "train_id"
+        ]
+
+        # ----------------------------------------------------
+        # No reutilitzar un tren estàtic
+        # ----------------------------------------------------
+
+        if train_id in used_train_ids:
+
+            print(
+                "  DESCARTAT:",
+                trip_id,
+                "->",
+                train_id,
+                "| tren ja utilitzat"
+            )
+
+            continue
+
+        # ----------------------------------------------------
+        # Aplicar només la parada que realment hem pogut
+        # identificar.
+        # ----------------------------------------------------
+
+        count = (
+            aplicar_matching_individual(
+                candidat
+            )
+        )
+
+        if count <= 0:
+
+            continue
+
+        used_trip_ids.add(
+            trip_id
+        )
+
+        used_train_ids.add(
+            train_id
+        )
+
+        trains_updated += 1
+
+        intelligent_matches += 1
+
+        stops_updated += count
+
+        candidats_processats += 1
+
+        print()
+
+        print(
+            "MATCH PER HORA ACCEPTAT:",
+            train_id,
+            "<->",
+            trip_id
+        )
+
+        print(
+            "  Parada:",
+            normalitzar_id(
+                candidat[
+                    "static_stop"
+                ].get(
+                    "stop_id"
+                )
+            )
+        )
+
+        print(
+            "  Teòrica:",
+            format_minutes(
+                candidat[
+                    "theoretical"
+                ]
+            )
+        )
+
+        print(
+            "  Realtime:",
+            format_minutes(
+                candidat[
+                    "real_minutes"
+                ]
+            )
+        )
+
+        print(
+            "  Retard feed:",
+            f"{candidat['delay_minutes']:+.1f} min"
+        )
+
+    # ========================================================
+    # 3. ESTATS
+    # ========================================================
 
     for train in r15_trains:
 
@@ -1404,9 +1549,9 @@ def main():
             train
         )
 
-    # --------------------------------------------------------
+    # ========================================================
     # METADADES
-    # --------------------------------------------------------
+    # ========================================================
 
     ara = datetime.now(
         TZ
@@ -1420,9 +1565,9 @@ def main():
         "source_type"
     ] = "Renfe GTFS-RT"
 
-    # --------------------------------------------------------
+    # ========================================================
     # GUARDAR
-    # --------------------------------------------------------
+    # ========================================================
 
     with open(
         path,
@@ -1437,9 +1582,9 @@ def main():
             indent=2
         )
 
-    # --------------------------------------------------------
+    # ========================================================
     # RESULTAT
-    # --------------------------------------------------------
+    # ========================================================
 
     print()
 
@@ -1476,7 +1621,7 @@ def main():
     )
 
     print(
-        "  - Matching intel·ligent:",
+        "  - Matching per hora:",
         intelligent_matches
     )
 
