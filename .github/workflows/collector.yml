@@ -1,3 +1,4 @@
+```yaml
 name: R15 Collector
 
 on:
@@ -14,64 +15,68 @@ jobs:
 
     steps:
 
-      # ======================================================
-      # DESCARREGAR REPOSITORI
-      # ======================================================
-
+      # --------------------------------------------------
+      # 1. DESCARREGAR REPOSITORI
+      # --------------------------------------------------
       - name: Descarregar repositori
         uses: actions/checkout@v4
 
-
-      # ======================================================
-      # CONFIGURAR PYTHON
-      # ======================================================
-
+      # --------------------------------------------------
+      # 2. CONFIGURAR PYTHON
+      # --------------------------------------------------
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-
-      # ======================================================
-      # INSTAL·LAR DEPENDÈNCIES
-      # ======================================================
-
+      # --------------------------------------------------
+      # 3. INSTAL·LAR DEPENDÈNCIES
+      # --------------------------------------------------
       - name: Instal·lar dependències
         run: |
           pip install requests
 
+      # --------------------------------------------------
+      # 4. INVESTIGAR FEEDS REALTIME DE RENFE
+      #
+      # Aquest pas va abans de collect.py expressament.
+      # Així podem investigar Renfe encara que el GTFS
+      # de la Generalitat no estiga disponible.
+      # --------------------------------------------------
+      - name: Investigar feeds Renfe
+        continue-on-error: true
+        run: |
+          python collector/probe_realtime.py
 
-      # ======================================================
-      # GENERAR HORARIS DEL DIA
-      # ======================================================
-
+      # --------------------------------------------------
+      # 5. GENERAR HORARIS DEL DIA
+      # --------------------------------------------------
       - name: Generar horaris del dia
+        continue-on-error: true
         run: |
           python collector/collect.py
 
-
-      # ======================================================
-      # ACTUALITZAR TEMPS REAL
-      # ======================================================
-
+      # --------------------------------------------------
+      # 6. ACTUALITZAR TEMPS REAL
+      # --------------------------------------------------
       - name: Actualitzar temps real
+        continue-on-error: true
         run: |
           python collector/realtime.py
 
-
-      # ======================================================
-      # PROVAR TOTS ELS FEEDS OFICIALS DE RENFE
-      # ======================================================
-
-      - name: Investigar feeds GTFS-RT Renfe
+      # --------------------------------------------------
+      # 7. INVESTIGAR FEEDS ADDICIONALS
+      #
+      # Mantinc aquest pas perquè ja el tenies al workflow.
+      # --------------------------------------------------
+      - name: Investigar feeds Renfe addicionals
+        continue-on-error: true
         run: |
           python collector/probe_renfe.py
 
-
-      # ======================================================
-      # GUARDAR DADES AL REPOSITORI
-      # ======================================================
-
+      # --------------------------------------------------
+      # 8. GUARDAR DADES
+      # --------------------------------------------------
       - name: Guardar dades al repositori
         run: |
           git config user.name "github-actions[bot]"
@@ -85,3 +90,4 @@ jobs:
             git commit -m "Actualitzar dades R15"
             git push
           fi
+```
