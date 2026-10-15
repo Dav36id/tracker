@@ -493,43 +493,28 @@ function normalizeDirection(value) {
 }
 
 
+
 function trainMatchesDirection(train, selectedDirection) {
-    const direction = normalizeDirection(selectedDirection);
+  const direction = normalizeDirection(selectedDirection);
+  const trainDirection = normalizeDirection(
+    train.direction || train.route_direction || train.direction_code || ""
+  );
 
-    const rawTrainDirection =
-        train.direction ||
-        train.route_direction ||
-        train.direction_code ||
-        "";
+  if (!trainDirection) return true;
 
-    const trainDirection = normalizeDirection(rawTrainDirection);
+  // Barcelona → Reus: els trens amb destinació Reus
+  if (direction === "BAR_REUS") {
+    return trainDirection === "REUS";
+  }
 
-    // Si el JSON no especifica direcció, no descartem el tren.
-    if (!trainDirection) {
-        return true;
-    }
+  // Reus → Barcelona: els trens amb destinació Barcelona
+  if (direction === "REUS_BAR") {
+    return trainDirection === "BARCELONA";
+  }
 
-    // Compatibilitat entre els valors del selector i els del JSON.
-    if (direction === "BAR_REUS" || direction === "BARCELONA_REUS") {
-        return (
-            trainDirection === "BARCELONA" ||
-            trainDirection === "BAR_REUS" ||
-            trainDirection === "BARCELONA_REUS" ||
-            trainDirection === "BARCELONA_ESTACIO_DE_FRANCA" ||
-            trainDirection === "BARCELONA_SANTS"
-        );
-    }
-
-    if (direction === "REUS_BAR" || direction === "REUS_BARCELONA") {
-        return (
-            trainDirection === "REUS" ||
-            trainDirection === "REUS_BAR" ||
-            trainDirection === "REUS_BARCELONA"
-        );
-    }
-
-    return trainDirection === direction;
+  return trainDirection === direction;
 }
+
 
 
 // ============================================================
