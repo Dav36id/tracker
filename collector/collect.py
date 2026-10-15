@@ -13,10 +13,9 @@ import requests
 # ============================================================
 # CONFIGURACIÓ
 # ============================================================
-
 GTFS_URL = (
-    "https://data.transport.gencat.cat/"
-    "estatic/renfe/GTFS/fomento_transit.zip"
+    "https://ssl.renfe.com/"
+    "ftransit/Fichero_CER_FOMENTO/fomento_transit.zip"
 )
 
 DATA_DIR = "data"
