@@ -1,10 +1,9 @@
-import csv
-import io
+```python
 import json
 import os
-import time
-import zipfile
+import sys
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import requests
@@ -14,527 +13,629 @@ import requests
 # CONFIGURACIÓ
 # ============================================================
 
-GTFS_URL = (
-    "https://ssl.renfe.com/"
-    "ftransit/Fichero_CER_FOMENTO/fomento_transit.zip"
-)
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
 
-DATA_DIR = "data"
-TZ = ZoneInfo("Europe/Madrid")
+GTFS_RT_URL = "https://gtfsrt.renfe.com/trip_updates.json"
+TIMEZONE = ZoneInfo("Europe/Madrid")
+TIMEOUT = (10, 25)
 
-MAX_REALTIME_ERROR_MINUTES = 5
+# Diferència màxima per al matching intel·ligent.
+MAX_TIME_DIFFERENCE_MINUTES = 10
+
+# Evitem aplicar una mateixa actualització a diversos trens.
+USED_FEED_IDS = set()
 
 
 # ============================================================
-# UTILITATS
+# DATA I HORA
 # ============================================================
 
-def normalitzar_text(value):
-    if value is None:
-        return ""
-    return str(value).strip()
+def ara_local():
+    return datetime.now(TIMEZONE)
 
 
-def minuts_des_de_mitjanit(value):
-    """Converteix HH:MM:SS en minuts, incloent hores superiors a 24."""
-    value = normalitzar_text(value)
+def data_local():
+    return ara_local().date().isoformat()
 
-    if not value:
+
+def minuts_a_hora(minuts):
+    if minuts is None:
+        return None
+
+    minuts = int(round(float(minuts))) % 1440
+    hores = minuts // 60
+    minuts_restants = minuts % 60
+
+    return f"{hores:02d}:{minuts_restants:02d}"
+
+
+def timestamp_a_minuts(timestamp):
+    if timestamp is None:
         return None
 
     try:
-        parts = value.split(":")
-        if len(parts) < 2:
-            return None
-
-        hour = int(parts[0])
-        minute = int(parts[1])
-
-        if hour < 0 or not 0 <= minute < 60:
-            return None
-
-        return hour * 60 + minute
-
-    except (TypeError, ValueError):
-        return None
-
-
-def carregar_csv(z, nom, obligatori=True):
-    """Llegeix un CSV del GTFS i neteja els espais."""
-    noms = set(z.namelist())
-
-    if nom not in noms:
-        if obligatori:
-            raise ValueError(
-                f"El fitxer obligatori {nom} no existeix al GTFS."
-            )
-
-        print(f"ℹ️ {nom} no existeix; es continuarà sense aquest fitxer.")
-        return []
-
-    with z.open(nom) as f:
-        text = io.TextIOWrapper(f, encoding="utf-8-sig")
-        reader = csv.DictReader(text)
-
-        files = []
-        for row in reader:
-            files.append({
-                normalitzar_text(k): normalitzar_text(v)
-                for k, v in row.items()
-                if k is not None
-            })
-
-        return files
-
-
-def carregar_json_anterior(path):
-    if not os.path.exists(path):
-        return None
-
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            dades = json.load(f)
-
-        if not isinstance(dades, dict):
-            return None
-
-        return dades
-
-    except (OSError, json.JSONDecodeError) as e:
-        print(f"⚠️ No s'ha pogut llegir el JSON anterior: {e}")
-        return None
-
-
-# ============================================================
-# DESCÀRREGA GTFS
-# ============================================================
-
-def descarregar_gtfs():
-    print("📥 Descarregant GTFS Renfe...")
-
-    for intent in range(1, 6):
-        try:
-            print(f"   Intent {intent}/5...")
-
-            response = requests.get(
-                GTFS_URL,
-                timeout=60,
-                headers={"User-Agent": "R15-Tracker/1.0"},
-            )
-            response.raise_for_status()
-
-            contingut = response.content
-
-            if not zipfile.is_zipfile(io.BytesIO(contingut)):
-                raise ValueError("La resposta descarregada no és un ZIP vàlid.")
-
-            print(f"✅ GTFS descarregat: {len(contingut)} bytes")
-            return zipfile.ZipFile(io.BytesIO(contingut))
-
-        except (
-            requests.exceptions.RequestException,
-            ValueError,
-            zipfile.BadZipFile,
-        ) as e:
-            print(f"⚠️ Error descarregant GTFS: {e}")
-
-            if intent < 5:
-                espera = intent * 10
-                print(f"   ⏳ Esperant {espera} segons...")
-                time.sleep(espera)
-
-    raise RuntimeError("No s'ha pogut descarregar un GTFS vàlid després de 5 intents.")
-
-
-# ============================================================
-# CALENDARI GTFS
-# ============================================================
-
-def obtenir_serveis_actius(calendar, calendar_dates, avui):
-    """
-    Retorna els service_id actius en la data indicada.
-
-    calendar.txt utilitza dates YYYYMMDD.
-    calendar_dates.txt afegeix o elimina serveis per a dates concretes:
-      exception_type=1 -> afegir servei
-      exception_type=2 -> eliminar servei
-    """
-    data_gtfs = avui.strftime("%Y%m%d")
-    weekday_fields = [
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday",
-    ]
-    weekday_field = weekday_fields[avui.weekday()]
-
-    serveis = set()
-
-    for cal in calendar:
-        start = normalitzar_text(cal.get("start_date"))
-        end = normalitzar_text(cal.get("end_date"))
-        service_id = normalitzar_text(cal.get("service_id"))
-
-        if not start or not end or not service_id:
-            continue
-
-        # Compare dates en el mateix format: YYYYMMDD.
-        if start <= data_gtfs <= end:
-            if normalitzar_text(cal.get(weekday_field)) == "1":
-                serveis.add(service_id)
-
-    afegits = 0
-    eliminats = 0
-
-    for excepcio in calendar_dates:
-        data_excepcio = normalitzar_text(excepcio.get("date"))
-
-        if data_excepcio != data_gtfs:
-            continue
-
-        service_id = normalitzar_text(excepcio.get("service_id"))
-        tipus = normalitzar_text(excepcio.get("exception_type"))
-
-        if not service_id:
-            continue
-
-        if tipus == "1":
-            if service_id not in serveis:
-                afegits += 1
-            serveis.add(service_id)
-
-        elif tipus == "2":
-            if service_id in serveis:
-                eliminats += 1
-            serveis.discard(service_id)
-
-    print(f"📆 Serveis vàlids avui: {len(serveis)}")
-    print(f"   Excepcions que afegeixen serveis: {afegits}")
-    print(f"   Excepcions que eliminen serveis: {eliminats}")
-
-    return serveis
-
-
-# ============================================================
-# CONSERVAR TEMPS REAL ANTERIOR
-# ============================================================
-
-def realtime_es_coherent(stop_nou, stop_antic):
-    if not isinstance(stop_antic, dict):
-        return False
-
-    actual = stop_antic.get("actual_minutes")
-    delay = stop_antic.get("delay_minutes")
-
-    if actual is None or delay is None:
-        return False
-
-    theoretical = stop_nou.get("scheduled_arrival")
-    if theoretical is None:
-        theoretical = stop_nou.get("scheduled_departure")
-
-    if theoretical is None:
-        return False
-
-    try:
-        actual = float(actual)
-        delay = float(delay)
-        theoretical = float(theoretical)
-    except (TypeError, ValueError):
-        return False
-
-    diferencia = actual - theoretical
-    return abs(diferencia - delay) <= MAX_REALTIME_ERROR_MINUTES
-
-
-def conservar_realtime_anterior(circulacions, dades_anteriors):
-    if not isinstance(dades_anteriors, dict):
-        return
-
-    trens_antics = {
-        str(tren.get("train_id")): tren
-        for tren in dades_anteriors.get("trains", [])
-        if tren.get("train_id")
-    }
-
-    conservats = 0
-    descartats = 0
-
-    for tren in circulacions:
-        antic = trens_antics.get(str(tren.get("train_id")))
-
-        if not antic:
-            continue
-
-        stops_antics = {
-            normalitzar_text(stop.get("stop_id")): stop
-            for stop in antic.get("stops", [])
-            if normalitzar_text(stop.get("stop_id"))
-        }
-
-        parades_realtime_valides = []
-
-        for stop in tren.get("stops", []):
-            stop_id = normalitzar_text(stop.get("stop_id"))
-            antic_stop = stops_antics.get(stop_id)
-
-            # Inicialitzem sempre els camps de temps real.
-            stop["actual_minutes"] = None
-            stop["actual_time"] = None
-            stop["delay_minutes"] = None
-
-            if not antic_stop:
-                continue
-
-            if not realtime_es_coherent(stop, antic_stop):
-                if (
-                    antic_stop.get("actual_minutes") is not None
-                    or antic_stop.get("delay_minutes") is not None
-                ):
-                    descartats += 1
-                continue
-
-            stop["actual_minutes"] = antic_stop.get("actual_minutes")
-            stop["actual_time"] = antic_stop.get("actual_time")
-            stop["delay_minutes"] = antic_stop.get("delay_minutes")
-
-            for camp in ("realtime_delay_minutes", "delay_seconds"):
-                if antic_stop.get(camp) is not None:
-                    stop[camp] = antic_stop[camp]
-
-            parades_realtime_valides.append(stop)
-            conservats += 1
-
-        tren["started"] = bool(parades_realtime_valides)
-        tren["arrived"] = False
-        tren["final_delay_minutes"] = 0
-
-        if parades_realtime_valides:
-            delay_final = parades_realtime_valides[-1].get("delay_minutes")
-
-            if delay_final is not None:
-                try:
-                    tren["final_delay_minutes"] = int(round(float(delay_final)))
-                except (TypeError, ValueError):
-                    pass
-
-        if tren.get("stops"):
-            ultim_stop = tren["stops"][-1]
-            ultim_id = normalitzar_text(ultim_stop.get("stop_id"))
-            antic_ultim = stops_antics.get(ultim_id)
-
-            if (
-                antic_ultim
-                and realtime_es_coherent(ultim_stop, antic_ultim)
-                and antic_ultim.get("actual_minutes") is not None
-            ):
-                tren["arrived"] = True
-
-    print("♻️ Temps real anterior:")
-    print(f"   Parades conservades: {conservats}")
-    print(f"   Parades descartades: {descartats}")
-
-
-# ============================================================
-# GENERAR DADES
-# ============================================================
-
-def generar_dades():
-    avui = datetime.now(TZ).date()
-    data_str = avui.isoformat()
-    data_path = os.path.join(DATA_DIR, f"{data_str}.json")
-
-    print("=" * 38)
-    print("🚆 COLLECT R15")
-    print("=" * 38)
-    print(f"📅 Data: {data_str}")
-
-    dades_anteriors = carregar_json_anterior(data_path)
-
-    if dades_anteriors:
-        print(f"♻️ JSON anterior trobat: {data_path}")
-    else:
-        print("ℹ️ No hi ha JSON anterior")
-
-    z = descarregar_gtfs()
-
-    with z:
-        routes = carregar_csv(z, "routes.txt")
-        trips = carregar_csv(z, "trips.txt")
-        stop_times = carregar_csv(z, "stop_times.txt")
-        stops = carregar_csv(z, "stops.txt")
-        calendar = carregar_csv(z, "calendar.txt", obligatori=False)
-        calendar_dates = carregar_csv(
-            z, "calendar_dates.txt", obligatori=False
+        instant = datetime.fromtimestamp(
+            float(timestamp),
+            tz=TIMEZONE
         )
+        return instant.hour * 60 + instant.minute
+    except (ValueError, TypeError, OverflowError, OSError):
+        return None
 
-    print()
-    print(f"Routes: {len(routes)}")
-    print(f"Trips: {len(trips)}")
-    print(f"Stop times: {len(stop_times)}")
-    print(f"Stops: {len(stops)}")
-    print(f"Calendar: {len(calendar)}")
-    print(f"Calendar dates: {len(calendar_dates)}")
 
-    serveis_actius = obtenir_serveis_actius(
-        calendar, calendar_dates, avui
+def minuts_desde_valor(valor):
+    if valor is None or valor == "":
+        return None
+
+    try:
+        if isinstance(valor, (int, float)):
+            return int(round(valor))
+
+        text = str(valor).strip()
+
+        if text.isdigit() or (
+            text.startswith("-") and text[1:].isdigit()
+        ):
+            return int(text)
+
+        parts = text.split(":")
+
+        if len(parts) >= 2:
+            return int(parts[0]) * 60 + int(parts[1])
+
+    except (ValueError, TypeError):
+        pass
+
+    return None
+
+
+def diferencia_circular(a, b):
+    """Diferència en minuts tenint en compte el canvi de dia."""
+    if a is None or b is None:
+        return None
+
+    diferencia = abs(int(a) - int(b))
+    return min(diferencia, 1440 - diferencia)
+
+
+# ============================================================
+# NORMALITZACIÓ
+# ============================================================
+
+def normalitzar_id(valor):
+    if valor is None:
+        return ""
+
+    return str(valor).strip()
+
+
+def obtenir_trip_id(update):
+    trip = update.get("trip") or update.get("trip_descriptor") or {}
+
+    return normalitzar_id(
+        trip.get("trip_id")
+        or trip.get("tripId")
+        or trip.get("id")
     )
 
-    routes_by_id = {
-        normalitzar_text(route.get("route_id")): route
-        for route in routes
-        if normalitzar_text(route.get("route_id"))
-    }
 
-    stops_by_id = {
-        normalitzar_text(stop.get("stop_id")): stop
-        for stop in stops
-        if normalitzar_text(stop.get("stop_id"))
-    }
+def obtenir_route_id(update):
+    trip = update.get("trip") or update.get("trip_descriptor") or {}
 
-    stop_times_by_trip = {}
+    return normalitzar_id(
+        trip.get("route_id")
+        or trip.get("routeId")
+    )
 
-    for st in stop_times:
-        trip_id = normalitzar_text(st.get("trip_id"))
-        if trip_id:
-            stop_times_by_trip.setdefault(trip_id, []).append(st)
 
-    trips_r15 = []
+def obtenir_stop_id(stop):
+    return normalitzar_id(
+        stop.get("stop_id")
+        or stop.get("stopId")
+        or stop.get("station_id")
+    )
 
-    for trip in trips:
-        trip_id = normalitzar_text(trip.get("trip_id"))
-        route_id = normalitzar_text(trip.get("route_id"))
-        service_id = normalitzar_text(trip.get("service_id"))
 
-        if not trip_id or service_id not in serveis_actius:
-            continue
+def obtenir_stop_sequence(stop):
+    try:
+        value = stop.get("stop_sequence", stop.get("stopSequence"))
 
-        route = routes_by_id.get(route_id)
-        if not route:
-            continue
-
-        short_name = normalitzar_text(route.get("route_short_name")).upper()
-        long_name = normalitzar_text(route.get("route_long_name")).upper()
-
-        # Identificació de la línia a partir de la informació de routes.txt.
-        if short_name != "R15" and "R15" not in long_name:
-            continue
-
-        trips_r15.append(trip)
-
-    print(f"🚆 Trips R15 avui: {len(trips_r15)}")
-
-    circulacions = []
-
-    for trip in trips_r15:
-        trip_id = normalitzar_text(trip.get("trip_id"))
-        trip_stop_times = stop_times_by_trip.get(trip_id, [])
-
-        if not trip_stop_times:
-            continue
-
-        def ordre_parada(st):
-            try:
-                return int(st.get("stop_sequence") or 0)
-            except ValueError:
-                return 0
-
-        trip_stop_times = sorted(trip_stop_times, key=ordre_parada)
-        stops_tren = []
-
-        for st in trip_stop_times:
-            stop_id = normalitzar_text(st.get("stop_id"))
-            stop = stops_by_id.get(stop_id)
-
-            if not stop:
-                continue
-
-            arrival = minuts_des_de_mitjanit(st.get("arrival_time"))
-            departure = minuts_des_de_mitjanit(st.get("departure_time"))
-
-            if arrival is None and departure is None:
-                continue
-
-            stops_tren.append({
-                "station": normalitzar_text(stop.get("stop_name")),
-                "stop_id": stop_id,
-                "scheduled_arrival": arrival,
-                "scheduled_departure": departure,
-                "actual_minutes": None,
-                "actual_time": None,
-                "delay_minutes": None,
-            })
-
-        if not stops_tren:
-            continue
-
-        first_station = stops_tren[0]["station"]
-        last_station = stops_tren[-1]["station"]
-
-        if "BARCELONA" in last_station.upper():
-            direction = "Barcelona"
-        elif "REUS" in last_station.upper():
-            direction = "Reus"
-        else:
-            direction = last_station
-
-        circulacions.append({
-            "train_id": trip_id,
-            "trip_id": trip_id,
-            "route_id": normalitzar_text(trip.get("route_id")),
-            "direction": direction,
-            "started": False,
-            "arrived": False,
-            "final_delay_minutes": 0,
-            "stops": stops_tren,
-        })
-
-    def hora_sort(tren):
-        stops = tren.get("stops", [])
-        if not stops:
-            return 999999
-
-        value = stops[0].get("scheduled_departure")
         if value is None:
-            value = stops[0].get("scheduled_arrival")
+            return None
 
-        return value if value is not None else 999999
+        return int(value)
+    except (ValueError, TypeError):
+        return None
 
-    circulacions.sort(key=hora_sort)
 
-    print(f"🚆 Circulacions generades: {len(circulacions)}")
+def obtenir_stop_updates(update):
+    stops = (
+        update.get("stop_time_update")
+        or update.get("stopTimeUpdate")
+        or update.get("stop_time_updates")
+        or []
+    )
 
-    # No sobreescrivim les dades del dia amb un fitxer buit.
-    # Això també fa visible un possible canvi d'estructura del GTFS.
-    if not circulacions:
-        raise RuntimeError(
-            "No s'ha trobat cap circulació de l'R15 per a hui. "
-            "No s'ha modificat el JSON existent. "
-            "Cal revisar els identificadors de ruta i els calendaris del GTFS."
+    return stops if isinstance(stops, list) else []
+
+
+# ============================================================
+# LECTURA DE TEMPS GTFS-RT
+# ============================================================
+
+def obtenir_event(stop_update, event_name):
+    event = (
+        stop_update.get(event_name)
+        or stop_update.get(
+            "arrival" if event_name == "arrival_time" else "departure"
+        )
+        or {}
+    )
+
+    if not isinstance(event, dict):
+        return {}
+
+    return event
+
+
+def obtenir_temps_event(stop_update, tipus):
+    event = stop_update.get(tipus) or {}
+
+    if not isinstance(event, dict):
+        return None
+
+    timestamp = event.get("time")
+
+    if timestamp is not None:
+        return timestamp_a_minuts(timestamp)
+
+    return None
+
+
+def obtenir_retard_event(stop_update, tipus):
+    event = stop_update.get(tipus) or {}
+
+    if not isinstance(event, dict):
+        return None
+
+    delay = event.get("delay")
+
+    if delay is None:
+        return None
+
+    try:
+        return int(round(float(delay) / 60))
+    except (ValueError, TypeError):
+        return None
+
+
+def obtenir_retard_trip(update):
+    trip = update.get("trip") or update.get("trip_descriptor") or {}
+
+    # Alguns feeds poden incloure un retard general del viatge.
+    for field in ("delay", "delay_seconds"):
+        value = trip.get(field)
+
+        if value is not None:
+            try:
+                return int(round(float(value) / 60))
+            except (ValueError, TypeError):
+                pass
+
+    return None
+
+
+# ============================================================
+# MATCHING DE PARADES
+# ============================================================
+
+def indexar_parades(train):
+    result = {}
+
+    for index, stop in enumerate(train.get("stops", [])):
+        stop_id = obtenir_stop_id(stop)
+        sequence = obtenir_stop_sequence(stop)
+
+        if stop_id:
+            result.setdefault(stop_id, []).append(index)
+
+        if sequence is not None:
+            result.setdefault(f"SEQ:{sequence}", []).append(index)
+
+    return result
+
+
+def trobar_parada(train, feed_stop, index):
+    stops = train.get("stops", [])
+    stop_id = obtenir_stop_id(feed_stop)
+
+    if stop_id:
+        for i, stop in enumerate(stops):
+            if obtenir_stop_id(stop) == stop_id:
+                return i
+
+    sequence = obtenir_stop_sequence(feed_stop)
+
+    if sequence is not None:
+        # Primer intent: coincidència de stop_sequence.
+        for i, stop in enumerate(stops):
+            if obtenir_stop_sequence(stop) == sequence:
+                return i
+
+        # Segon intent: la seqüència pot correspondre a l'índex.
+        if 0 <= sequence < len(stops):
+            return sequence
+
+    return None
+
+
+def obtenir_horari_parada(stop):
+    for field in (
+        "scheduled_arrival",
+        "scheduled_departure",
+        "arrival",
+        "departure"
+    ):
+        value = minuts_desde_valor(stop.get(field))
+
+        if value is not None:
+            return value
+
+    return None
+
+
+def puntuacio_matching(train, feed_stops):
+    """
+    Calcula si les parades i els horaris del feed corresponen
+    a una circulació programada.
+    """
+    stops = train.get("stops", [])
+
+    if not stops or not feed_stops:
+        return None
+
+    coincidencies = 0
+    diferencies = []
+
+    for feed_stop in feed_stops:
+        index = trobar_parada(train, feed_stop, None)
+
+        if index is None:
+            continue
+
+        scheduled = obtenir_horari_parada(stops[index])
+
+        arrival = obtenir_temps_event(feed_stop, "arrival")
+        departure = obtenir_temps_event(feed_stop, "departure")
+        actual = arrival if arrival is not None else departure
+
+        delay = obtenir_retard_event(feed_stop, "arrival")
+
+        if delay is None:
+            delay = obtenir_retard_event(feed_stop, "departure")
+
+        if scheduled is None:
+            continue
+
+        coincidencies += 1
+
+        if actual is not None:
+            expected = actual - (delay or 0)
+            diff = diferencia_circular(scheduled, expected)
+            if diff is not None:
+                diferencies.append(diff)
+
+    # Exigim diverses parades coincidents per evitar associacions dubtoses.
+    if coincidencies < 2:
+        return None
+
+    if diferencies:
+        mitjana = sum(diferencies) / len(diferencies)
+
+        if mitjana > MAX_TIME_DIFFERENCE_MINUTES:
+            return None
+
+        return (coincidencies, mitjana)
+
+    # Sense temps reals no podem confirmar l'associació només amb una parada.
+    return (coincidencies, 0)
+
+
+# ============================================================
+# APLICAR ACTUALITZACIONS A LES PARADES
+# ============================================================
+
+def aplicar_actualitzacio_parada(train_stop, feed_stop):
+    updated = False
+
+    for event_name in ("arrival", "departure"):
+        event = feed_stop.get(event_name) or {}
+
+        if not isinstance(event, dict):
+            continue
+
+        actual = obtenir_temps_event(feed_stop, event_name)
+        delay = obtenir_retard_event(feed_stop, event_name)
+
+        if actual is not None:
+            train_stop["actual_minutes"] = actual
+            train_stop["actual_time"] = minuts_a_hora(actual)
+            train_stop["realtime_source"] = "Renfe GTFS-RT"
+            updated = True
+
+        if delay is not None:
+            train_stop["delay_minutes"] = delay
+            train_stop["delay_seconds"] = delay * 60
+            updated = True
+
+    return updated
+
+
+def aplicar_actualitzacio_tren(train, update, feed_id):
+    feed_stops = obtenir_stop_updates(update)
+    stops = train.get("stops", [])
+
+    if not stops or not feed_stops:
+        return 0
+
+    actualitzades = 0
+
+    for feed_stop in feed_stops:
+        index = trobar_parada(train, feed_stop, None)
+
+        if index is None or index >= len(stops):
+            continue
+
+        if aplicar_actualitzacio_parada(stops[index], feed_stop):
+            actualitzades += 1
+
+    if actualitzades:
+        train["realtime_updated_at"] = ara_local().isoformat()
+        train["realtime_source"] = "Renfe GTFS-RT"
+        train["realtime_trip_id"] = obtenir_trip_id(update)
+
+        trip_delay = obtenir_retard_trip(update)
+
+        if trip_delay is not None:
+            train["realtime_trip_delay_minutes"] = trip_delay
+            train["final_delay_minutes"] = trip_delay
+        else:
+            # Si no hi ha retard general, utilitzem l'última parada
+            # que dispose de retard, si n'hi ha.
+            for stop in reversed(stops):
+                delay = stop.get("delay_minutes")
+
+                if delay is not None:
+                    try:
+                        train["final_delay_minutes"] = int(delay)
+                        break
+                    except (ValueError, TypeError):
+                        pass
+
+        train["realtime_updated"] = True
+
+    return actualitzades
+
+
+# ============================================================
+# EXTRAURE ENTITATS DEL FEED
+# ============================================================
+
+def obtenir_trip_updates(feed):
+    entities = feed.get("entity", feed.get("entities", []))
+
+    if not isinstance(entities, list):
+        return []
+
+    result = []
+
+    for entity in entities:
+        update = (
+            entity.get("trip_update")
+            or entity.get("tripUpdate")
+            or entity.get("trip_update_descriptor")
         )
 
-    conservar_realtime_anterior(circulacions, dades_anteriors)
+        if isinstance(update, dict):
+            entity_id = normalitzar_id(entity.get("id"))
+            result.append((entity_id, update))
 
-    os.makedirs(DATA_DIR, exist_ok=True)
+    return result
 
-    dades = {
-        "date": data_str,
-        "generated_at": datetime.now(TZ).isoformat(),
-        "source": "Renfe GTFS",
-        "trains": circulacions,
+
+# ============================================================
+# MATCHING DIRECTE I INTEL·LIGENT
+# ============================================================
+
+def actualitzar_trens(trains, updates):
+    directes = 0
+    intelligents = 0
+    sense_match = 0
+    parades_actualitzades = 0
+
+    # Índex dels identificadors dels trens del JSON.
+    by_train_id = {}
+
+    for train in trains:
+        for field in ("train_id", "trip_id", "id", "tripId"):
+            value = normalitzar_id(train.get(field))
+
+            if value:
+                by_train_id.setdefault(value, []).append(train)
+
+    used_trains = set()
+
+    for feed_id, update in updates:
+        trip_id = obtenir_trip_id(update)
+        feed_stops = obtenir_stop_updates(update)
+
+        candidates = by_train_id.get(trip_id, []) if trip_id else []
+
+        train = next(
+            (candidate for candidate in candidates
+             if id(candidate) not in used_trains),
+            None
+        )
+
+        # Matching directe: l'identificador del viatge coincideix.
+        if train is not None:
+            directes += 1
+        else:
+            # Matching intel·ligent: busquem coincidències de parades
+            # i d'horaris, però només acceptem una associació clara.
+            ranked = []
+
+            for candidate in trains:
+                if id(candidate) in used_trains:
+                    continue
+
+                score = puntuacio_matching(candidate, feed_stops)
+
+                if score is not None:
+                    ranked.append((score, candidate))
+
+            ranked.sort(
+                key=lambda item: (
+                    -item[0][0],
+                    item[0][1]
+                )
+            )
+
+            if ranked:
+                best_score, best_train = ranked[0]
+
+                # Si el segon candidat té una puntuació pràcticament
+                # igual, no associem el feed de manera arbitrària.
+                ambiguous = (
+                    len(ranked) > 1
+                    and ranked[1][0][0] == best_score[0]
+                    and abs(ranked[1][0][1] - best_score[1]) < 1
+                )
+
+                if ambiguous:
+                    sense_match += 1
+                    continue
+
+                train = best_train
+                intelligents += 1
+
+        if train is None:
+            sense_match += 1
+            continue
+
+        if feed_id and feed_id in USED_FEED_IDS:
+            continue
+
+        used_trains.add(id(train))
+
+        if feed_id:
+            USED_FEED_IDS.add(feed_id)
+
+        count = aplicar_actualitzacio_tren(train, update, feed_id)
+        parades_actualitzades += count
+
+        if count == 0:
+            # Si no s'ha pogut associar cap parada, no comptem
+            # aquest tren com una actualització efectiva.
+            sense_match += 1
+
+    return {
+        "directes": directes,
+        "intelligents": intelligents,
+        "sense_match": sense_match,
+        "parades_actualitzades": parades_actualitzades
     }
 
-    with open(data_path, "w", encoding="utf-8") as f:
-        json.dump(dades, f, ensure_ascii=False, indent=2)
 
-    print(f"💾 Guardat: {data_path}")
-    print(f"🚆 Trens: {len(circulacions)}")
-    print("✅ COLLECT FINALITZAT")
+# ============================================================
+# MAIN
+# ============================================================
+
+def main():
+    print("=" * 42)
+    print("R15 REALTIME")
+    print(f"Data local: {data_local()}")
+    print("=" * 42)
+
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Utilitzem la data de Catalunya, no la data UTC del runner.
+    today = data_local()
+    json_path = DATA_DIR / f"{today}.json"
+
+    if not json_path.exists():
+        print(f"ERROR: no existeix: {json_path.relative_to(BASE_DIR)}")
+
+        available = sorted(DATA_DIR.glob("*.json"))
+
+        if available:
+            print("Fitxers disponibles:")
+            for path in available[-5:]:
+                print(f"  - {path.name}")
+
+        sys.exit(1)
+
+    try:
+        with json_path.open("r", encoding="utf-8") as file:
+            data = json.load(file)
+    except (OSError, json.JSONDecodeError) as error:
+        print(f"ERROR llegint el JSON de trens: {error}")
+        sys.exit(1)
+
+    trains = data.get("trains", data.get("circulations", []))
+
+    if not isinstance(trains, list):
+        print("ERROR: el JSON no conté una llista de trens vàlida.")
+        sys.exit(1)
+
+    print(f"Fitxer: {json_path.relative_to(BASE_DIR)}")
+    print(f"Trens programats: {len(trains)}")
+
+    try:
+        response = requests.get(
+            GTFS_RT_URL,
+            timeout=TIMEOUT,
+            headers={"User-Agent": "R15-Tracker/1.0"}
+        )
+        response.raise_for_status()
+        feed = response.json()
+    except requests.RequestException as error:
+        print(f"ERROR descarregant el feed de Renfe: {error}")
+        print("Es conserva el JSON programat sense modificar.")
+        sys.exit(1)
+    except ValueError as error:
+        print(f"ERROR: el feed de Renfe no és JSON vàlid: {error}")
+        sys.exit(1)
+
+    updates = obtenir_trip_updates(feed)
+
+    print(f"Actualitzacions del feed: {len(updates)}")
+
+    stats = actualitzar_trens(trains, updates)
+
+    # Actualitzem les dades de control sense eliminar els horaris.
+    data["realtime_checked_at"] = ara_local().isoformat()
+    data["realtime_feed_url"] = GTFS_RT_URL
+    data["realtime_stats"] = stats
+
+    try:
+        with json_path.open("w", encoding="utf-8") as file:
+            json.dump(data, file, ensure_ascii=False, indent=2)
+            file.write("\n")
+    except OSError as error:
+        print(f"ERROR desant les dades: {error}")
+        sys.exit(1)
+
+    print("-" * 42)
+    print(f"Matching directe: {stats['directes']}")
+    print(f"Matching intel·ligent: {stats['intelligents']}")
+    print(f"Sense correspondència: {stats['sense_match']}")
+    print(f"Parades actualitzades: {stats['parades_actualitzades']}")
+    print(f"Guardat: {json_path.relative_to(BASE_DIR)}")
+    print("R15 REALTIME FINALITZAT")
 
 
 if __name__ == "__main__":
-    generar_dades()
-
+    main()
+```
