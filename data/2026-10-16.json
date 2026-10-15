@@ -4361,5 +4361,13 @@
         }
       ]
     }
-  ]
+  ],
+  "realtime_checked_at": "2026-10-16T01:12:14.644642+02:00",
+  "realtime_feed_url": "https://gtfsrt.renfe.com/trip_updates.json",
+  "realtime_stats": {
+    "directes": 0,
+    "intelligents": 0,
+    "sense_match": 0,
+    "parades_actualitzades": 0
+  }
 }
