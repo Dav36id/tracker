@@ -537,4 +537,4 @@ def generar_dades():
 
 if __name__ == "__main__":
     generar_dades()
-```
+
