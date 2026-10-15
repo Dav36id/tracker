@@ -1,4 +1,3 @@
-```javascript
 const directionSelect = document.getElementById("direction");
 const dateInput = document.getElementById("date");
 const trainsContainer = document.getElementById("trains");
@@ -838,4 +837,4 @@ loadData();
 // ============================================================
 
 setInterval(loadData, 60 * 1000);
-```
+
