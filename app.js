@@ -410,30 +410,34 @@ function getTrainStatus(train, selectedDate) {
 // STATUS TEXT
 // ============================================================
 
+
 function getStatusText(status, train) {
     const delay = getFinalDelay(train);
 
-    switch (status) {
-        case "pending":
-            return "Encara no ha sortit";
-
-        case "running":
-            return delay > 0
-                ? `En circulació · +${delay} min`
-                : "En circulació · en hora";
-
-        case "warning":
-            return `En circulació · +${delay} min`;
-
-        case "late":
-            return `Arribat · +${delay} min`;
-
-        case "finished":
-            return "Arribat";
-
-        default:
-            return "";
+    if (status === "pending") {
+        return "Encara no ha sortit";
     }
+
+    if (status === "running") {
+        if (delay > 0) {
+            return "En circulació · +" + delay + " min";
+        }
+        return "En circulació · en hora";
+    }
+
+    if (status === "warning") {
+        return "En circulació · +" + delay + " min";
+    }
+
+    if (status === "late") {
+        return "Arribat · +" + delay + " min";
+    }
+
+    if (status === "finished") {
+        return "Arribat";
+    }
+
+    return "";
 }
 
 // ============================================================
