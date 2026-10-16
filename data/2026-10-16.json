@@ -2451,7 +2451,12 @@
           "station": "Barcelona-Passeig de Gràcia",
           "stop_id": "71802",
           "scheduled_arrival": 1183,
-          "scheduled_departure": 1184
+          "scheduled_departure": 1184,
+          "actual_minutes": 1221,
+          "actual_time": "20:21",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 39,
+          "delay_seconds": 2340
         },
         {
           "station": "Barcelona Estació de França",
@@ -2459,7 +2464,12 @@
           "scheduled_arrival": 1194,
           "scheduled_departure": 1194
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T20:14:30.024696+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V15020R15",
+      "final_delay_minutes": 39,
+      "realtime_updated": true
     },
     {
       "train_id": "5187V15017R15",
@@ -2519,7 +2529,12 @@
           "station": "Vila-seca",
           "stop_id": "71401",
           "scheduled_arrival": 1192,
-          "scheduled_departure": 1192
+          "scheduled_departure": 1192,
+          "actual_minutes": 1223,
+          "actual_time": "20:23",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 32,
+          "delay_seconds": 1920
         },
         {
           "station": "Reus",
@@ -2527,7 +2542,12 @@
           "scheduled_arrival": 1203,
           "scheduled_departure": 1203
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T20:14:30.023944+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V15017R15",
+      "final_delay_minutes": 32,
+      "realtime_updated": true
     },
     {
       "train_id": "5187V30519R15",
@@ -2575,7 +2595,12 @@
           "station": "Altafulla-Tamarit",
           "stop_id": "71502",
           "scheduled_arrival": 1202,
-          "scheduled_departure": 1202
+          "scheduled_departure": 1202,
+          "actual_minutes": 1216,
+          "actual_time": "20:16",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 15,
+          "delay_seconds": 900
         },
         {
           "station": "Tarragona",
@@ -2637,7 +2662,12 @@
           "scheduled_arrival": 1299,
           "scheduled_departure": 1299
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T20:14:30.025912+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V30519R15",
+      "final_delay_minutes": 15,
+      "realtime_updated": true
     },
     {
       "train_id": "5187V15022R15",
@@ -2679,7 +2709,12 @@
           "station": "Sant Vicenç de Calders",
           "stop_id": "71600",
           "scheduled_arrival": 1219,
-          "scheduled_departure": 1220
+          "scheduled_departure": 1220,
+          "actual_minutes": 1221,
+          "actual_time": "20:21",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 2,
+          "delay_seconds": 120
         },
         {
           "station": "Vilanova i la Geltrú",
@@ -2705,7 +2740,12 @@
           "scheduled_arrival": 1284,
           "scheduled_departure": 1284
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T20:14:30.024792+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V15022R15",
+      "final_delay_minutes": 2,
+      "realtime_updated": true
     },
     {
       "train_id": "5187V15039R15",
@@ -2855,7 +2895,12 @@
           "station": "Vila-seca",
           "stop_id": "71401",
           "scheduled_arrival": 1275,
-          "scheduled_departure": 1275
+          "scheduled_departure": 1275,
+          "actual_minutes": 1275,
+          "actual_time": "21:15",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 0,
+          "delay_seconds": 0
         },
         {
           "station": "Tarragona",
@@ -2905,7 +2950,12 @@
           "scheduled_arrival": 1374,
           "scheduled_departure": 1374
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T20:14:30.024710+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V15024R15",
+      "final_delay_minutes": 0,
+      "realtime_updated": true
     },
     {
       "train_id": "5187V15021R15",
@@ -3044,13 +3094,13 @@
       ]
     }
   ],
-  "realtime_checked_at": "2026-10-16T16:22:03.133488+02:00",
+  "realtime_checked_at": "2026-10-16T20:14:30.041235+02:00",
   "realtime_feed_url": "https://gtfsrt.renfe.com/trip_updates.json",
   "realtime_stats": {
-    "directes": 7,
+    "directes": 5,
     "intelligents": 0,
-    "sense_match": 422,
-    "parades_actualitzades": 7
+    "sense_match": 401,
+    "parades_actualitzades": 5
   },
   "realtime_updated_at": "2026-10-16T02:43:14.909176+02:00",
   "source_type": "Renfe GTFS-RT"
