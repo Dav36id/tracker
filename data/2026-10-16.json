@@ -715,7 +715,12 @@
           "station": "Móra la Nova",
           "stop_id": "71300",
           "scheduled_arrival": 697,
-          "scheduled_departure": 698
+          "scheduled_departure": 698,
+          "actual_minutes": 721,
+          "actual_time": "12:01",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 24,
+          "delay_seconds": 1440
         },
         {
           "station": "Ascó",
@@ -777,7 +782,12 @@
           "scheduled_arrival": 832,
           "scheduled_departure": 832
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T11:47:36.221417+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V30501R15",
+      "final_delay_minutes": 24,
+      "realtime_updated": true
     },
     {
       "train_id": "5187V15034R15",
@@ -1009,7 +1019,12 @@
           "station": "Barcelona-Passeig de Gràcia",
           "stop_id": "71802",
           "scheduled_arrival": 673,
-          "scheduled_departure": 674
+          "scheduled_departure": 674,
+          "actual_minutes": 707,
+          "actual_time": "11:47",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 34,
+          "delay_seconds": 2040
         },
         {
           "station": "Barcelona Estació de França",
@@ -1017,7 +1032,12 @@
           "scheduled_arrival": 684,
           "scheduled_departure": 684
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T11:47:36.221045+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V15006R15",
+      "final_delay_minutes": 34,
+      "realtime_updated": true
     },
     {
       "train_id": "5187V15005R15",
@@ -2954,12 +2974,12 @@
       ]
     }
   ],
-  "realtime_checked_at": "2026-10-16T07:08:17.326659+02:00",
+  "realtime_checked_at": "2026-10-16T11:47:36.239947+02:00",
   "realtime_feed_url": "https://gtfsrt.renfe.com/trip_updates.json",
   "realtime_stats": {
     "directes": 2,
     "intelligents": 0,
-    "sense_match": 378,
+    "sense_match": 264,
     "parades_actualitzades": 2
   },
   "realtime_updated_at": "2026-10-16T02:43:14.909176+02:00",
