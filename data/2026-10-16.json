@@ -62,10 +62,7 @@
           "stop_id": "71802",
           "scheduled_arrival": 433,
           "scheduled_departure": 434,
-          "actual_minutes": 436,
-          "actual_time": "07:16",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 3,
           "delay_seconds": 180
         },
         {
@@ -78,7 +75,6 @@
       "realtime_updated_at": "2026-10-16T07:08:17.298893+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15000R15",
-      "final_delay_minutes": 3,
       "realtime_updated": true
     },
     {
@@ -134,10 +130,7 @@
           "stop_id": "71801",
           "scheduled_arrival": 457,
           "scheduled_departure": 459,
-          "actual_minutes": 463,
-          "actual_time": "07:43",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 6,
           "delay_seconds": 360
         },
         {
@@ -156,7 +149,6 @@
       "realtime_updated_at": "2026-10-16T07:08:17.298859+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15002R15",
-      "final_delay_minutes": 6,
       "realtime_updated": true
     },
     {
@@ -716,10 +708,7 @@
           "stop_id": "71300",
           "scheduled_arrival": 697,
           "scheduled_departure": 698,
-          "actual_minutes": 721,
-          "actual_time": "12:01",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 24,
           "delay_seconds": 1440
         },
         {
@@ -786,7 +775,6 @@
       "realtime_updated_at": "2026-10-16T11:47:36.221417+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V30501R15",
-      "final_delay_minutes": 24,
       "realtime_updated": true
     },
     {
@@ -1020,10 +1008,7 @@
           "stop_id": "71802",
           "scheduled_arrival": 673,
           "scheduled_departure": 674,
-          "actual_minutes": 707,
-          "actual_time": "11:47",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 34,
           "delay_seconds": 2040
         },
         {
@@ -1036,7 +1021,6 @@
       "realtime_updated_at": "2026-10-16T11:47:36.221045+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15006R15",
-      "final_delay_minutes": 34,
       "realtime_updated": true
     },
     {
@@ -1416,10 +1400,7 @@
           "stop_id": "71700",
           "scheduled_arrival": 991,
           "scheduled_departure": 992,
-          "actual_minutes": 997,
-          "actual_time": "16:37",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 6,
           "delay_seconds": 360
         },
         {
@@ -1444,7 +1425,6 @@
       "realtime_updated_at": "2026-10-16T16:22:03.112034+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V30550R15",
-      "final_delay_minutes": 6,
       "realtime_updated": true
     },
     {
@@ -1772,10 +1752,7 @@
           "stop_id": "71801",
           "scheduled_arrival": 997,
           "scheduled_departure": 999,
-          "actual_minutes": 1016,
-          "actual_time": "16:56",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 20,
           "delay_seconds": 1200
         },
         {
@@ -1794,7 +1771,6 @@
       "realtime_updated_at": "2026-10-16T16:22:03.107637+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V17050R15",
-      "final_delay_minutes": 20,
       "realtime_updated": true
     },
     {
@@ -1832,10 +1808,7 @@
           "stop_id": "71600",
           "scheduled_arrival": 978,
           "scheduled_departure": 979,
-          "actual_minutes": 995,
-          "actual_time": "16:35",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 18,
           "delay_seconds": 1080
         },
         {
@@ -1872,7 +1845,6 @@
       "realtime_updated_at": "2026-10-16T16:22:03.107760+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15013R15",
-      "final_delay_minutes": 18,
       "realtime_updated": true
     },
     {
@@ -1892,10 +1864,7 @@
           "stop_id": "71401",
           "scheduled_arrival": 1005,
           "scheduled_departure": 1005,
-          "actual_minutes": 1005,
-          "actual_time": "16:45",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 0,
           "delay_seconds": 0
         },
         {
@@ -1950,7 +1919,6 @@
       "realtime_updated_at": "2026-10-16T16:22:03.108988+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15016R15",
-      "final_delay_minutes": 0,
       "realtime_updated": true
     },
     {
@@ -1970,10 +1938,7 @@
           "stop_id": "71802",
           "scheduled_arrival": 1015,
           "scheduled_departure": 1016,
-          "actual_minutes": 1015,
-          "actual_time": "16:55",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 0,
           "delay_seconds": 0
         },
         {
@@ -2028,7 +1993,6 @@
       "realtime_updated_at": "2026-10-16T16:22:03.108998+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15015R15",
-      "final_delay_minutes": 0,
       "realtime_updated": true
     },
     {
@@ -2206,10 +2170,7 @@
           "stop_id": "71401",
           "scheduled_arrival": 1035,
           "scheduled_departure": 1035,
-          "actual_minutes": 1035,
-          "actual_time": "17:15",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 0,
           "delay_seconds": 0
         },
         {
@@ -2264,7 +2225,6 @@
       "realtime_updated_at": "2026-10-16T16:22:03.108896+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15018R15",
-      "final_delay_minutes": 0,
       "realtime_updated": true
     },
     {
@@ -2284,10 +2244,7 @@
           "stop_id": "71802",
           "scheduled_arrival": 1045,
           "scheduled_departure": 1046,
-          "actual_minutes": 1045,
-          "actual_time": "17:25",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 0,
           "delay_seconds": 0
         },
         {
@@ -2390,7 +2347,6 @@
       "realtime_updated_at": "2026-10-16T16:22:03.111729+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V30535R15",
-      "final_delay_minutes": 0,
       "realtime_updated": true
     },
     {
@@ -2452,10 +2408,7 @@
           "stop_id": "71802",
           "scheduled_arrival": 1183,
           "scheduled_departure": 1184,
-          "actual_minutes": 1221,
-          "actual_time": "20:21",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 39,
           "delay_seconds": 2340
         },
         {
@@ -2468,7 +2421,6 @@
       "realtime_updated_at": "2026-10-16T20:14:30.024696+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15020R15",
-      "final_delay_minutes": 39,
       "realtime_updated": true
     },
     {
@@ -2530,10 +2482,7 @@
           "stop_id": "71401",
           "scheduled_arrival": 1192,
           "scheduled_departure": 1192,
-          "actual_minutes": 1223,
-          "actual_time": "20:23",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 32,
           "delay_seconds": 1920
         },
         {
@@ -2546,7 +2495,6 @@
       "realtime_updated_at": "2026-10-16T20:14:30.023944+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15017R15",
-      "final_delay_minutes": 32,
       "realtime_updated": true
     },
     {
@@ -2596,10 +2544,7 @@
           "stop_id": "71502",
           "scheduled_arrival": 1202,
           "scheduled_departure": 1202,
-          "actual_minutes": 1216,
-          "actual_time": "20:16",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 15,
           "delay_seconds": 900
         },
         {
@@ -2666,7 +2611,6 @@
       "realtime_updated_at": "2026-10-16T20:14:30.025912+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V30519R15",
-      "final_delay_minutes": 15,
       "realtime_updated": true
     },
     {
@@ -2710,10 +2654,7 @@
           "stop_id": "71600",
           "scheduled_arrival": 1219,
           "scheduled_departure": 1220,
-          "actual_minutes": 1221,
-          "actual_time": "20:21",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 2,
           "delay_seconds": 120
         },
         {
@@ -2744,7 +2685,6 @@
       "realtime_updated_at": "2026-10-16T20:14:30.024792+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15022R15",
-      "final_delay_minutes": 2,
       "realtime_updated": true
     },
     {
@@ -2896,10 +2836,7 @@
           "stop_id": "71401",
           "scheduled_arrival": 1275,
           "scheduled_departure": 1275,
-          "actual_minutes": 1275,
-          "actual_time": "21:15",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 0,
           "delay_seconds": 0
         },
         {
@@ -2949,17 +2886,13 @@
           "stop_id": "79400",
           "scheduled_arrival": 1374,
           "scheduled_departure": 1374,
-          "actual_minutes": 1410,
-          "actual_time": "23:30",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 36,
           "delay_seconds": 2160
         }
       ],
       "realtime_updated_at": "2026-10-16T23:20:59.381310+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15024R15",
-      "final_delay_minutes": 36,
       "realtime_updated": true
     },
     {
@@ -3027,17 +2960,13 @@
           "stop_id": "71400",
           "scheduled_arrival": 1383,
           "scheduled_departure": 1383,
-          "actual_minutes": 1404,
-          "actual_time": "23:24",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 22,
           "delay_seconds": 1320
         }
       ],
       "realtime_updated_at": "2026-10-16T23:20:59.380896+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15021R15",
-      "final_delay_minutes": 22,
       "realtime_updated": true
     },
     {
@@ -3081,10 +3010,7 @@
           "stop_id": "71503",
           "scheduled_arrival": 1378,
           "scheduled_departure": 1379,
-          "actual_minutes": 1406,
-          "actual_time": "23:26",
           "realtime_source": "Renfe GTFS-RT",
-          "delay_minutes": 28,
           "delay_seconds": 1680
         },
         {
@@ -3115,7 +3041,6 @@
       "realtime_updated_at": "2026-10-16T23:20:59.381322+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15023R15",
-      "final_delay_minutes": 28,
       "realtime_updated": true
     }
   ],
@@ -3127,6 +3052,6 @@
     "sense_match": 167,
     "parades_actualitzades": 3
   },
-  "realtime_updated_at": "2026-10-16T02:43:14.909176+02:00",
+  "realtime_updated_at": "2026-10-17T01:44:07.529820+02:00",
   "source_type": "Renfe GTFS-RT"
 }
