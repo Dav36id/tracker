@@ -2948,13 +2948,18 @@
           "station": "Barcelona Estació de França",
           "stop_id": "79400",
           "scheduled_arrival": 1374,
-          "scheduled_departure": 1374
+          "scheduled_departure": 1374,
+          "actual_minutes": 1410,
+          "actual_time": "23:30",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 36,
+          "delay_seconds": 2160
         }
       ],
-      "realtime_updated_at": "2026-10-16T20:14:30.024710+02:00",
+      "realtime_updated_at": "2026-10-16T23:20:59.381310+02:00",
       "realtime_source": "Renfe GTFS-RT",
       "realtime_trip_id": "5187V15024R15",
-      "final_delay_minutes": 0,
+      "final_delay_minutes": 36,
       "realtime_updated": true
     },
     {
@@ -3021,9 +3026,19 @@
           "station": "Reus",
           "stop_id": "71400",
           "scheduled_arrival": 1383,
-          "scheduled_departure": 1383
+          "scheduled_departure": 1383,
+          "actual_minutes": 1404,
+          "actual_time": "23:24",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 22,
+          "delay_seconds": 1320
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T23:20:59.380896+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V15021R15",
+      "final_delay_minutes": 22,
+      "realtime_updated": true
     },
     {
       "train_id": "5187V15023R15",
@@ -3065,7 +3080,12 @@
           "station": "Torredembarra",
           "stop_id": "71503",
           "scheduled_arrival": 1378,
-          "scheduled_departure": 1379
+          "scheduled_departure": 1379,
+          "actual_minutes": 1406,
+          "actual_time": "23:26",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 28,
+          "delay_seconds": 1680
         },
         {
           "station": "Altafulla-Tamarit",
@@ -3091,16 +3111,21 @@
           "scheduled_arrival": 1413,
           "scheduled_departure": 1413
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T23:20:59.381322+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V15023R15",
+      "final_delay_minutes": 28,
+      "realtime_updated": true
     }
   ],
-  "realtime_checked_at": "2026-10-16T20:14:30.041235+02:00",
+  "realtime_checked_at": "2026-10-16T23:20:59.390020+02:00",
   "realtime_feed_url": "https://gtfsrt.renfe.com/trip_updates.json",
   "realtime_stats": {
-    "directes": 5,
+    "directes": 3,
     "intelligents": 0,
-    "sense_match": 401,
-    "parades_actualitzades": 5
+    "sense_match": 167,
+    "parades_actualitzades": 3
   },
   "realtime_updated_at": "2026-10-16T02:43:14.909176+02:00",
   "source_type": "Renfe GTFS-RT"
