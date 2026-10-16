@@ -61,7 +61,12 @@
           "station": "Barcelona-Passeig de Gràcia",
           "stop_id": "71802",
           "scheduled_arrival": 433,
-          "scheduled_departure": 434
+          "scheduled_departure": 434,
+          "actual_minutes": 436,
+          "actual_time": "07:16",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 3,
+          "delay_seconds": 180
         },
         {
           "station": "Barcelona Estació de França",
@@ -69,7 +74,12 @@
           "scheduled_arrival": 444,
           "scheduled_departure": 444
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T07:08:17.298893+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V15000R15",
+      "final_delay_minutes": 3,
+      "realtime_updated": true
     },
     {
       "train_id": "5187V15002R15",
@@ -123,7 +133,12 @@
           "station": "Barcelona-Sants",
           "stop_id": "71801",
           "scheduled_arrival": 457,
-          "scheduled_departure": 459
+          "scheduled_departure": 459,
+          "actual_minutes": 463,
+          "actual_time": "07:43",
+          "realtime_source": "Renfe GTFS-RT",
+          "delay_minutes": 6,
+          "delay_seconds": 360
         },
         {
           "station": "Barcelona-Passeig de Gràcia",
@@ -137,7 +152,12 @@
           "scheduled_arrival": 474,
           "scheduled_departure": 474
         }
-      ]
+      ],
+      "realtime_updated_at": "2026-10-16T07:08:17.298859+02:00",
+      "realtime_source": "Renfe GTFS-RT",
+      "realtime_trip_id": "5187V15002R15",
+      "final_delay_minutes": 6,
+      "realtime_updated": true
     },
     {
       "train_id": "5187V30531R15",
@@ -2934,13 +2954,13 @@
       ]
     }
   ],
-  "realtime_checked_at": "2026-10-16T02:43:14.285316+02:00",
+  "realtime_checked_at": "2026-10-16T07:08:17.326659+02:00",
   "realtime_feed_url": "https://gtfsrt.renfe.com/trip_updates.json",
   "realtime_stats": {
-    "directes": 0,
+    "directes": 2,
     "intelligents": 0,
-    "sense_match": 0,
-    "parades_actualitzades": 0
+    "sense_match": 378,
+    "parades_actualitzades": 2
   },
   "realtime_updated_at": "2026-10-16T02:43:14.909176+02:00",
   "source_type": "Renfe GTFS-RT"
